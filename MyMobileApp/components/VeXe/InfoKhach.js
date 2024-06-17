@@ -10,13 +10,13 @@ const CustomerForm = ({ onSubmit }) => {
  
   const handleAddCustomer = () => {
     if (name && email && diachi && dienthoai && CMND) {
-      const customer = { name, email, diachi, dienthoai, CMND };
-      onSubmit(customer);
-      setName('');
-      setEmail('');
-      setDiaChi('');
-      setDienThoai('');
-      setCMND('');
+        const customer = { name, email, diachi, dienthoai, CMND };
+        onSubmit(customer);
+        setName('');
+        setEmail('');
+        setDiaChi('');
+        setDienThoai('');
+        setCMND('');
     } else {
       Alert.alert('Vui lòng điền đầy đủ thông tin khách hàng!');
     }

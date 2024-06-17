@@ -24,29 +24,47 @@ const TaiXeDetail = ({ route }) => {
   }, [TaiXeID]);
 
   const XoaTaiXe = async () => {
-    try{
-      const res = await API.delete(`${endpoints['taixe']}${TaiXeID}/Xoa_TX/`);
-      if (res.status === 204) {
-        console.log('Tài xế được xóa thành công');
-      } else {
-        console.error('Không thể xóa tài xế');
-      }
-      console.log('Thông tin tài xế đã được xóa');
-      Alert.alert(
-          'Xóa thành công',
-          'Bạn vui lòng quay lại trang Tài xế để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
-          [
-              {
-                  text: 'OK',
-                  onPress: () => navigation.navigate('Tài Xế')
-              },
-          ],
-          {cancelable: false}
-      )
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+    // Hiển thị cảnh báo xác nhận
+    Alert.alert(
+        'Xác nhận xóa',
+        'Bạn có chắc chắn muốn xóa tài xế này?',
+        [
+            {
+                text: 'Hủy',
+                style: 'cancel',
+            },
+            {
+                text: 'Xóa',
+                onPress: async () => {
+                    try {
+                        const res = await API.delete(`${endpoints['taixe']}${TaiXeID}/Xoa_TX/`);
+                        if (res.status === 204) {
+                            console.log('Tài xế được xóa thành công');
+                            // Hiển thị thông báo xóa thành công
+                            Alert.alert(
+                                'Xóa thành công',
+                                'Bạn vui lòng quay lại trang Tài xế để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+                                [
+                                    {
+                                        text: 'OK',
+                                        onPress: () => navigation.navigate('Tài Xế - Danh Sách')
+                                    },
+                                ],
+                                { cancelable: false }
+                            );
+                        } else {
+                            console.error('Không thể xóa tài xế');
+                            // Xử lý trường hợp không thể xóa tài xế
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+            },
+        ],
+        { cancelable: false }
+    );
+};
 
   const quayLai = () => {
     navigation.navigate('Tài Xế - Danh Sách');

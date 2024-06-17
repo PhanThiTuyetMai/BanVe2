@@ -20,4 +20,6 @@ r.register('loainguoidung', views.LoaiNguoiDungViewSet, 'loainguoidung')
 
 urlpatterns = [
     path('', include(r.urls)),
+    path('payment/', views.payment_view, name='payment'),
+    path('zalo/payment/', views.create_payment, name='zalopay'),
 ]

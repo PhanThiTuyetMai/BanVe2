@@ -24,30 +24,44 @@ const KhachHangDetail = ({ route }) => {
   }, [KhachHangID]);
 
   const XoaKhachHang = async () => {
-    try{
-      const res = await API.delete(`${endpoints['khachhang']}${KhachHangID}/Xoa_KH/`);
-      if (res.status === 204) {
-        console.log('Khách hàng được xóa thành công');
-        
-      } else {
-        console.error('Không thể xóa khách hàng');
-      
-      }
-      console.log('Thông tin khách hàng đã được xóa');
-      Alert.alert(
-          'Xóa thành công',
-          'Bạn vui lòng quay lại trang Khách Hàng để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
-          [
-              {
-                  text: 'OK',
-                  onPress: () => navigation.navigate('Khách Hàng')
-              },
-          ],
-          {cancelable: false}
-      )
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    Alert.alert(
+        'Xác nhận xóa',
+        'Bạn có chắc chắn muốn xóa khách hàng này?',
+        [
+            {
+                text: 'Hủy',
+                style: 'cancel',
+            },
+            {
+                text: 'Xóa',
+                onPress: async () => {
+                    try {
+                        const res = await API.delete(`${endpoints['khachhang']}${KhachHangID}/Xoa_KH/`);
+                        if (res.status === 204) {
+                            console.log('Khách hàng được xóa thành công');
+                            // Hiển thị thông báo xóa thành công
+                            Alert.alert(
+                                'Xóa thành công',
+                                'Bạn vui lòng quay lại trang Khách Hàng để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+                                [
+                                    {
+                                        text: 'OK',
+                                        onPress: () => navigation.navigate('Khách Hàng - Danh Sách')
+                                    },
+                                ],
+                                { cancelable: false }
+                            );
+                        } else {
+                            console.error('Không thể xóa khách hàng');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                },
+            },
+        ],
+        { cancelable: false }
+    );
   };
 
   const quayLai = () => {
@@ -123,13 +137,13 @@ const KhachHangDetail = ({ route }) => {
                       </TouchableOpacity>
                     </View>
                 </ScrollView>
-       ))}
+        ))}
     </View>
   );
-  
-};
 
-const styles = StyleSheet.create({
+  };
+
+  const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
@@ -173,8 +187,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 5,
   },
-});
+  });
 
-export default KhachHangDetail;
+  export default KhachHangDetail;
 
 

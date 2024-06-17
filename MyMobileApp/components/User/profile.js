@@ -132,23 +132,37 @@ const Profile = () => {
         setTicketDetailsVisible(!ticketDetailsVisible);
     };
 
+    const refreshData = () => {
+        loadVe();
+        loadChuyen(allTickets);
+        loadGhe(chitiet, allTickets);
+        Chucvu();
+    };
+
     const renderTicketDetails = () => {
         return (
             <ScrollView>
-                {uniqueTickets.map((ticket, index) => (
-                    <View key={index} style={styles.itemContainer} >
-                        <Text>Mã vé: {ticket.id}</Text>
-                        <Text>Ngày đặt: {chuyenDoiNgay(ticket.updated_date)}</Text>
-                        <Text>Thanh toán: {ticket.trangthai_TT}</Text>
-                        <Text>Chuyến Xe: {tenchuyen[index]}</Text>
-                        <Text>Ghế ngồi: {uniqueGhe[index]}</Text>
-                        <Text>Giờ đi: {gioDi[index]}</Text>
-                        {new Date(ticket.updated_date) >= today ? 
-                            <Text style={{color: 'blue', marginLeft: 220}}>Chưa hoàn thành</Text> : <Text style={{color: 'blue', marginLeft: 220}}>Đã hoàn thành</Text>}
-                    </View>
-                ))}
+                {uniqueTickets.length === 0 ? (
+                    <Text style={{fontSize: 18, color: 'orange', fontWeight: 'bold', marginLeft: 95, marginTop: 18, marginBottom: 18}}>Bạn không có đơn hàng nào</Text>
+                ) : (
+                    uniqueTickets.map((ticket, index) => (
+                        <View key={index} style={styles.itemContainer}>
+                            <Text>Mã vé: {ticket.id}</Text>
+                            <Text>Ngày đặt: {chuyenDoiNgay(ticket.updated_date)}</Text>
+                            <Text>Thanh toán: {ticket.trangthai_TT}</Text>
+                            <Text>Chuyến Xe: {tenchuyen[index]}</Text>
+                            <Text>Ghế ngồi: {uniqueGhe[index]}</Text>
+                            <Text>Giờ đi: {gioDi[index]}</Text>
+                            {new Date(ticket.updated_date) >= today ? (
+                                <Text style={{color: 'blue', marginLeft: 220}}>Chưa hoàn thành</Text>
+                            ) : (
+                                <Text style={{color: 'blue', marginLeft: 220}}>Đã hoàn thành</Text>
+                            )}
+                        </View>
+                    ))
+                )}
             </ScrollView>
-        );
+        );        
     };
 
     return (
@@ -177,6 +191,9 @@ const Profile = () => {
                     </View>
                 </View>
             </View>
+            <Text style={styles.detailsLinkRes} onPress={refreshData}>Làm mới đơn hàng</Text>
+            <Text></Text>
+            <Text>Lưu ý nếu không thấy vé đã đặt vui lòng nhấn làm mới đơn hàng</Text>
             <Text style={styles.detailsLink} onPress={toggleTicketDetailsVisibility}>Xem chi tiết đơn hàng</Text>
                 {ticketDetailsVisible && renderTicketDetails()}
             </ScrollView>
@@ -219,6 +236,12 @@ const Profile = () => {
             textDecorationLine: 'underline',
             marginTop: 10,
             marginLeft: 260,
+        },
+        detailsLinkRes: {
+            color: 'red',
+            textDecorationLine: 'underline',
+            marginTop: 15,
+            marginLeft: 15,
         },
     });
     

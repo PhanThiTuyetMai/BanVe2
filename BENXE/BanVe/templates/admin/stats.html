@@ -1,0 +1,217 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<h1>THỐNG KÊ MẬT ĐỘ VÀ DOANH THU</h1>
+
+{% if tuyen_stats %}
+    <h2>Thống kê mật độ chuyến xe theo tuyến:</h2>
+    <ul>
+        {% for s in tuyen_stats %}
+        <li><strong>{{ s.Ten_tuyen }}: </strong> {{ s.counter }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Biểu đồ mật độ chuyến xe:</h2>
+    <div style="width:50%;">
+         <canvas id="myChart"></canvas>
+    </div>
+{% endif %}
+<br/><br/>
+<h1>THỐNG KÊ DOANH THU</h1>
+<br/><br/>
+<form action="" method="GET">
+    <label for="nam">Chọn năm:</label>
+    <select id="nam" name="nam">
+    </select>
+    <input type="submit" value="Thực hiện">
+</form>
+
+{% if doanh_thu_theo_thang %}
+    <h2>Doanh thu tháng:</h2>
+    <ul>
+        {% for thang, doanh_thu in doanh_thu_theo_thang.items %}
+            <li>Tháng {{ thang }}: {{ doanh_thu }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if doanh_thu_theo_quy %}
+    <h2>Doanh thu quý:</h2>
+    <ul>
+        {% for item in doanh_thu_theo_quy %}
+            <li>Quý {{ item.quarter }}: {{ item.total_doanh_thu }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if doanh_thu_nam %}
+    <h2>Doanh thu năm:</h2>
+    <ul>
+        {% for item in doanh_thu_nam %}
+            <li>Năm {{ item.year }}: {{ item.total_doanh_thu }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if doanh_thu_theo_thang %}
+    <h2>Doanh thu tháng:</h2>
+    <div style="width: 50%;">
+        <canvas id="myChartThang"></canvas>
+    </div>
+{% endif %}
+
+{% if doanh_thu_theo_quy %}
+    <h2>Doanh thu quý:</h2>
+    <div style="width: 50%;">
+        <canvas id="myChartQuy"></canvas>
+    </div>
+{% endif %}
+
+{% if doanh_thu_nam %}
+    <h2>Thống kê doanh thu theo năm:</h2>
+    <div style="width: 50%;">
+        <canvas id="myChartNam"></canvas>
+    </div>
+{% endif %}
+
+<script>
+    // Lấy ngày hiện tại
+    var now = new Date();
+    var currentYear = now.getFullYear();
+
+    // Tạo danh sách các tùy chọn cho menu dropdown
+    var select = document.getElementById("nam");
+    for (var i = currentYear; i >= currentYear - 4; i--) {
+        var option = document.createElement("option");
+        option.text = i;
+        option.value = i;
+        select.add(option);
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Biểu đồ mật độ chuyến xe
+    let dataTuyen = [];
+    let labelsTuyen = [];
+    {% for s in tuyen_stats %}
+        dataTuyen.push({{ s.counter }});
+        labelsTuyen.push('{{s.Ten_tuyen}}');
+    {% endfor %}
+    window.onload = function() {
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labelsTuyen,
+                datasets: [{
+                    label: '# Số lượng',
+                    data: dataTuyen,
+                    borderWidth: 1,
+                    backgroundColor: ['red', 'green', 'blue', 'gold', 'brown']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ doanh thu
+        {% if doanh_thu_theo_thang %}
+            let dataThang = [];
+            let labelsThang = [];
+            {% for thang, doanh_thu in doanh_thu_theo_thang.items %}
+                dataThang.push({{ doanh_thu }});
+                labelsThang.push('Tháng ' + {{ thang }});
+            {% endfor %}
+            const ctxThang = document.getElementById('myChartThang');
+            new Chart(ctxThang, {
+                type: 'bar',
+                data: {
+                    labels: labelsThang,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: dataThang,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        {% endif %}
+        {% if doanh_thu_theo_quy %}
+            let dataQuy = [];
+            let labelsQuy = [];
+            {% for item in doanh_thu_theo_quy %}
+                dataQuy.push({{ item.total_doanh_thu }});
+                labelsQuy.push('Quý ' + {{ item.quarter }});
+            {% endfor %}
+            const ctxQuy = document.getElementById('myChartQuy');
+            new Chart(ctxQuy, {
+                type: 'bar',
+                data: {
+                    labels: labelsQuy,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: dataQuy,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        {% endif %}
+
+        {% if doanh_thu_nam %}
+            let dataNam = [];
+            let labelsNam = [];
+            {% for item in doanh_thu_nam %}
+                dataNam.push({{ item.total_doanh_thu }});
+                labelsNam.push('{{ item.year }}');
+            {% endfor %}
+
+            const ctxNam = document.getElementById('myChartNam');
+
+            new Chart(ctxNam, {
+                type: 'bar',
+                data: {
+                    labels: labelsNam,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: dataNam,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    }
+</script>
+{% endblock %}

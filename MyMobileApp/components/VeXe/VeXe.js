@@ -6,10 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomerForm from './InfoKhach';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-
+import axios from 'axios';
+import { Linking } from 'react-native';
 
 const DatVe = ({ route }) => {
-    const navigation = useNavigation();
+    const { navigate } = useNavigation();
     const { ChuyenXeID } = route.params;
     const [user, dispatch] = useContext(MyContext);
     const [chuyenxe, setChuyenXe] = useState([]);
@@ -114,6 +115,44 @@ const DatVe = ({ route }) => {
         return giaDinhDang;
     };
 
+    const handlePaymentMoMo = async () => {
+        try {
+            const response = await API.post(endpoints['momo'], null, {
+                headers: {
+                  amount: tinhTien().toString(), 
+                },
+            });
+            if (response.data.payUrl) {
+                Linking.openURL(response.data.payUrl);
+            }
+            else {
+                Alert.alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau!');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau!');
+        }
+    };
+
+    const handlePaymentZalo = async () => {
+        try {
+            const response = await API.post(endpoints['zalo'], null, {
+                headers: {
+                  amount: tinhTien().toString(), 
+                },
+            });
+            if (response.data.order_url) {
+                Linking.openURL(response.data.order_url);
+            }
+            else {
+                Alert.alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau!');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau!');
+        }
+    };
+
     const handleSubmit = async () => {
         if (user && user.Loai_NguoiDung === "3" || user.Loai_NguoiDung === "1" || user.Loai_NguoiDung === "4"){
             try {
@@ -142,10 +181,12 @@ const DatVe = ({ route }) => {
                         case 'momo':
                             // Thực hiện thanh toán qua Momo
                             trangthai_TT = 'Đã thanh toán qua Momo';
+                            handlePaymentMoMo();
                             break;
                         case 'zalo':
                             // Thực hiện thanh toán qua Zalo
                             trangthai_TT = 'Đã thanh toán qua Zalo';
+                            handlePaymentZalo();
                             break;
                         case 'cash':
                             // Thực hiện thanh toán trực tiếp tại quầy
@@ -154,6 +195,7 @@ const DatVe = ({ route }) => {
                         default:
                             break;
                     }
+                    navigate ('Đơn hàng');
                 }
 
                 const veID = [];
@@ -234,9 +276,6 @@ const DatVe = ({ route }) => {
                         }
                     }
                 }));
-                
-                // Hiển thị thông báo hoặc thực hiện các hành động sau khi hoàn tất quá trình đặt vé thành công
-                //Alert.alert('Đã đặt vé thành công!');
             } catch (error) {
                 console.error(error);
                 // Xử lý lỗi khi gửi thông tin không thành công
@@ -348,10 +387,6 @@ const DatVe = ({ route }) => {
                         }
                     }
                 }));
-                
-                // Hiển thị thông báo hoặc thực hiện các hành động sau khi hoàn tất quá trình đặt vé thành công
-                Alert.alert('Đã đặt vé thành công!');
-                navigation.navigate('Danh sách đơn hàng');
             } catch (error) {
                 console.error(error);
                 Alert.alert('Có lỗi xảy ra khi thực hiện đặt vé. Vui lòng thử lại sau!');

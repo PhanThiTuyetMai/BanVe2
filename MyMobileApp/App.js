@@ -30,6 +30,9 @@ import ThongKeMĐ from './components/ThongKe/ThongKeMatDo';
 import ThongKeDT from './components/ThongKe/ThongkeDT';
 import Thongke from './components/ThongKe/TCThongKe';
 import Profile from './components/User/profile';
+import ChuyenTaiXe from './components/TaiXe/TaiXeChuyen';
+import SuaChuyenXe from './components/ChuyenXe/SuaChuyenXe';
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -41,17 +44,18 @@ function DrawerNavigator() {
   return (
     <MyContext.Provider value={[user, dispatch]}>
       <Drawer.Navigator screenOptions={{ headerRight: Logout }}>
-        <Drawer.Screen name='Trang Chủ' component={Home} />
-        <Drawer.Screen name='Đơn hàng' component={Profile} />
         {user === null ? (
-          <Drawer.Screen name='Login' component={Login} />
+          <>
+            <Drawer.Screen name='Trang Chủ' component={Home} />
+            <Drawer.Screen name='Login' component={Login} />
+          </>
         ) : (
           <>
             <Drawer.Screen name={user.username} component={Home} />
             <Drawer.Screen name='Logout' component={Logout} />
+            <Drawer.Screen name='Đơn hàng' component={Profile} />
           </>
         )}
-
         {user && user.Loai_NguoiDung === "1" && (
           <>
             <Drawer.Screen name="Nhân Viên" component={NhanVienStackNavigator} />
@@ -59,6 +63,17 @@ function DrawerNavigator() {
             <Drawer.Screen name='Tài Xế' component={TaiXeStackNavigator} />
             <Drawer.Screen name='Thống Kê' component={ThongKeNavigator} />
             <Drawer.Screen name='Tuyến Xe' component={TuyenXeNavigator} />
+          </>
+        )}
+        {((user && user.Loai_NguoiDung === "2") || (user && user.Loai_NguoiDung === "3")) && (
+          <>
+            <Drawer.Screen name='Tuyến Xe' component={TuyenXeNavigator} />
+          </>
+        )}
+        {user && user.Loai_NguoiDung === "4" && (
+          <>
+            <Drawer.Screen name='Tuyến Xe' component={TuyenXeNavigator} />
+            <Drawer.Screen name='Tài Xế - Chuyến' component={ChuyenTaiXe} />
           </>
         )}
       </Drawer.Navigator>
@@ -115,8 +130,8 @@ function TuyenXeNavigator () {
       <Drawer.Screen name='Danh Sách Tuyến Xe' component={TuyenXe} />
       <Drawer.Screen name='Chuyến Xe' component={ChuyenXe} options={{ headerShown: false }}/>
       <Drawer.Screen name='ChuyenXeDetail' component={ChuyenXeDetail} options={{ headerShown: false }}/>
+      <Drawer.Screen name='Sửa Chuyến Xe' component={SuaChuyenXe} options={{ headerShown: false }}/>
       <Drawer.Screen name='Đặt Vé' component={DatVe} options={{ headerShown: false }}/>
-      <Drawer.Screen name='Danh sách đơn hàng' component={Profile} />
     </Stack.Navigator>
   )
 }

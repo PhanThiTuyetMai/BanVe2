@@ -5,7 +5,7 @@ import MyStyles from "../../styles/MyStyles"
 import "moment/locale/vi"
 import { Picker } from "@react-native-picker/picker";
 import moment from "moment";
-import DateTimePicker from '@react-native-community/datetimepicker'; // hoặc "react-native"
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot, faEllipsis, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { Alert } from 'react-native';
@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 const ChuyenXe = ({ route }) => {
     const { TuyenXeID } = route.params;
     const navigation = useNavigation();
+    const [page, setPage] = useState(1);
     const [chuyenxe, setChuyenXe] = useState([]);
     const [tuyenxe, setTuyenXe] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -28,6 +29,8 @@ const ChuyenXe = ({ route }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [searchResultFound, setSearchResultFound] = useState(true);
     const [ngayle, setNgayLe] = useState([]);
+    const [taixe, setTaiXe] = useState([]);
+    const [xe, setXe] = useState([]);
 
 
 
@@ -70,10 +73,49 @@ const ChuyenXe = ({ route }) => {
         }
     };
 
+    const loadTaiXe = async () => {
+        if (page > 0){
+            try {
+                setLoading(true);
+                let url = `${endpoints['taixe']}?page=${page}`;
+                let res = await API.get(url);
+                if (page === 1) {
+                  setTaiXe(res.data.results);
+                  setPage(page + 1);
+                } else if (page !== 0) {
+                  setTaiXe(current => [...current, ...res.data.results]);
+                  setPage(page + 1);
+                }
+                if (res.data.next === null) {
+                  setPage(0);
+                }
+            } catch (ex) {
+                console.error(ex);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    const XeData = async () => {
+        try {
+            setLoading(true);
+            const res = await API.get(endpoints['xe']);
+            setXe(res.data);
+        } catch (ex) {
+            console.error(ex);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     useEffect(() => {
         loadCX();
         loadTX();
         loadNgayLe();
+        loadTaiXe();
+        XeData();
     }, []);
 
     const onRefresh = () => {
@@ -127,9 +169,9 @@ const ChuyenXe = ({ route }) => {
     const handleDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || selectedDate;
         setSelectedDate(currentDate);
-        setShowDatePicker(false); // Đóng DateTimePicker sau khi chọn ngày
+        setShowDatePicker(false); 
         searchByDate(currentDate);
-        searchBySelectedDate(); // Cập nhật locchuyenxe ngay sau khi chọn ngày
+        searchBySelectedDate();
     };
     
     
@@ -185,8 +227,8 @@ const ChuyenXe = ({ route }) => {
     }
 
     const goToTuyenXe = () => {
-        navigation.navigate('Tuyến Xe');
-      }
+        navigation.navigate('Danh Sách Tuyến Xe');
+    }
 
     return (
         <View style={MyStyles.container}>
@@ -212,7 +254,7 @@ const ChuyenXe = ({ route }) => {
                     )}
                     {showDatePicker && (
                         <DateTimePicker
-                        value={defaultDate} // Sử dụng giá trị defaultDate
+                        value={defaultDate} 
                         mode="date"
                         is24Hour={true}
                         display="default"
@@ -283,7 +325,23 @@ const ChuyenXe = ({ route }) => {
                                         <Text style={{fontSize: 15, marginTop: 15}}>{c.Noiden}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={{fontSize: 15, marginTop: 15}}>{loaiXe(c.Ma_Xe)} {c.Cho_trong} chỗ trống</Text>
+                                        {taixe && taixe.map(t => {
+                                            if (t.id === c.Ma_TaiXe) {
+                                                return (
+                                                    <Text key={t.id} style={{ fontSize: 15, marginTop: 15 }}>Tài xế: {t.Ten_taixe}</Text>
+                                                );
+                                            }
+                                        })}
+                                        {xe && xe.map(x => {
+                                            if (x.id === c.Ma_Xe) {
+                                                return (
+                                                    <Text key={x.id} style={{ fontSize: 15, marginTop: 15 }}>Xe: {x.Bien_so}</Text>
+                                                );
+                                            }
+                                        })}
+                                    </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={{fontSize: 15, marginTop: 15}}>{loaiXe(c.Ma_Xe)} {c.Cho_trong} chỗ</Text>
                                         <Text style={{fontSize: 15, marginTop: 15}}>{formDate(c.Ngay)}</Text>
                                         <Text style={{fontSize: 15, marginTop: 15}} key={d.id}>{tinhGia(c.Ngay,d.BangGia)}</Text>
                                     </View>
@@ -315,7 +373,23 @@ const ChuyenXe = ({ route }) => {
                                             <Text style={{fontSize: 15, marginTop: 15}}>{c.Noiden}</Text>
                                         </View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Text style={{fontSize: 15, marginTop: 15}}>{loaiXe(c.Ma_Xe)} {c.Cho_trong} chỗ trống</Text>
+                                        {taixe && taixe.map(t => {
+                                            if (t.id === c.Ma_TaiXe) {
+                                                return (
+                                                    <Text key={t.id} style={{ fontSize: 15, marginTop: 15 }}>Tài xế: {t.Ten_taixe}</Text>
+                                                );
+                                            }
+                                        })}
+                                        {xe && xe.map(x => {
+                                            if (x.id === c.Ma_Xe) {
+                                                return (
+                                                    <Text key={x.id} style={{ fontSize: 15, marginTop: 15 }}>Xe: {x.Bien_so}</Text>
+                                                );
+                                            }
+                                        })}
+                                        </View>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Text style={{fontSize: 15, marginTop: 15}}>{loaiXe(c.Ma_Xe)} {c.Cho_trong} chỗ</Text>
                                             <Text style={{fontSize: 15, marginTop: 15}}>{formDate(c.Ngay)}</Text>
                                             {tuyenxe && tuyenxe.map(
                                                 d => (
@@ -376,7 +450,7 @@ const styles = StyleSheet.create({
     },
     rectangle: {
         width: 409,
-        height: 130,
+        height: 167,
         backgroundColor: 'white', // Màu nền trắng
         marginBottom: 20,
     },

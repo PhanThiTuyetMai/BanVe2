@@ -1,6 +1,7 @@
 import subprocess
 import psutil
 import time
+from datetime import datetime
 from rest_framework import viewsets, generics, status, parsers, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,8 +10,15 @@ from .models import (NhanVien, KhachHang, TaiXe,
                      ChuyenXe, TuyenXe, Ve_Xe, Chi_Tiet_Ve_Xe, User, Like, Comment, Ghe, Xe, Khach_di, NgayLe, LoaiNguoiDung)
 from . import serializers, paginators
 from . import prems
-
-import subprocess
+import hashlib
+from django.http import JsonResponse, HttpRequest
+import json
+import requests
+import hmac
+import random
+from django.views.decorators.csrf import csrf_exempt
+import urllib.request
+import urllib.parse
 
 
 def start_django_server():
@@ -262,6 +270,10 @@ class ChuyenXeViewSet(viewsets.ViewSet, generics.ListAPIView):
         if giodi:
             queryset = queryset.filter(Giodi=giodi)
 
+        idtaixe = self.request.query_params.get('idtaixe')
+        if idtaixe:
+            queryset = queryset.filter(Ma_TaiXe_id=idtaixe)
+
         return queryset
 
 
@@ -504,3 +516,94 @@ class LoaiNguoiDungViewSet(viewsets.ViewSet, generics.ListAPIView):
         if ma:
             queryset = queryset.filter(id=ma)
         return  queryset
+
+
+@csrf_exempt
+def payment_view(request: HttpRequest):
+    accessKey = 'F8BBA842ECF85'
+    secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz'
+    orderInfo = 'pay with MoMo'
+    partnerCode = 'MOMO'
+    redirectUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b'
+    ipnUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b'
+    requestType = "payWithMethod"
+    amount = request.headers.get('amount', '')  # Lấy amount từ header
+    orderId = partnerCode + str(int(time.time() * 1000))
+    requestId = orderId
+    extraData = ''
+    orderGroupId = ''
+    autoCapture = True
+    autoCapture = True
+    lang = 'vi'
+
+    # Tạo chuỗi signature
+    rawSignature = f"accessKey={accessKey}&amount={amount}&extraData={extraData}&ipnUrl={ipnUrl}&orderId={orderId}&orderInfo={orderInfo}&partnerCode={partnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}"
+    signature = hmac.new(secretKey.encode(), rawSignature.encode(), hashlib.sha256).hexdigest()
+
+    # Tạo request body
+    data = {
+        "partnerCode": partnerCode,
+        "partnerName": "Test",
+        "storeId": "MomoTestStore",
+        "requestId": requestId,
+        "amount": amount,
+        "orderId": orderId,
+        "orderInfo": orderInfo,
+        "redirectUrl": redirectUrl,
+        "ipnUrl": ipnUrl,
+        "lang": lang,
+        "requestType": requestType,
+        "autoCapture": autoCapture,
+        "extraData": extraData,
+        "orderGroupId": orderGroupId,
+        "signature": signature
+    }
+
+    # Gửi request đến MoMo
+    response = requests.post('https://test-payment.momo.vn/v2/gateway/api/create', json=data)
+    response_data = response.json()
+    pay_url = response_data.get('payUrl')
+
+    return JsonResponse(response_data)
+
+
+config = {
+      "app_id": 2553,
+      "key1": "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+      "key2": "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+      "endpoint": "https://sb-openapi.zalopay.vn/v2/create"
+}
+
+@csrf_exempt
+def create_payment(request):
+    if request.method == 'POST':
+        # Lấy thông tin từ yêu cầu của người dùng
+        amount = request.headers.get('amount', '')  # Lấy amount từ header
+        transID = random.randrange(1000000)
+        # Xây dựng yêu cầu thanh toán
+        order = {
+            "app_id": config["app_id"],
+            "app_trans_id": "{:%y%m%d}_{}".format(datetime.today(), transID),  # mã giao dich có định dạng yyMMdd_xxxx
+            "app_user": "user123",
+            "app_time": int(round(time.time() * 1000)),  # miliseconds
+            "embed_data": json.dumps({}),
+            "item": json.dumps([{}]),
+            "amount": amount,
+            "description": "Thanh Toán Vé Xe #" + str(transID),
+            "bank_code": "",
+        }
+
+        # Tạo chuỗi dữ liệu và mã hóa HMAC
+        data = "{}|{}|{}|{}|{}|{}|{}".format(order["app_id"], order["app_trans_id"], order["app_user"],
+                                             order["amount"], order["app_time"], order["embed_data"], order["item"])
+        order["mac"] = hmac.new(config['key1'].encode(), data.encode(), hashlib.sha256).hexdigest()
+
+        # Gửi yêu cầu đến ZaloPay API
+        try:
+            response = urllib.request.urlopen(url=config["endpoint"], data=urllib.parse.urlencode(order).encode())
+            result = json.loads(response.read())
+            return JsonResponse(result)
+        except Exception as e:
+            return JsonResponse({"error": str(e)})
+    else:
+        return JsonResponse({"error": "Only POST requests are allowed"})

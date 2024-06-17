@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { TextInput } from "react-native-gesture-handler";
+import { StyleSheet, Text, View } from "react-native"
+import { TextInput, Button } from "react-native-paper"
 import LoginStyle from "./LoginStyle";
 import { useContext, useState } from "react";
 import MyContext from "../../configs/MyContext";
@@ -12,8 +12,10 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, dispatch] = useContext(MyContext);
-
+  const [loading, setLoading ] = useState(false);
+ 
   const login = async () => {
+    setLoading(true);
     try{
           const formData = new FormData();
           formData.append('username', username);
@@ -21,7 +23,7 @@ const Login = () => {
           formData.append('client_id', "bs7r97ArUviQw1i7szIJTWuuNUlnaqye1DYQbgbP");
           formData.append('client_secret', "pU5wRaAJ9wH1dz9YrZTdQB3NNo0SAtdSxIx2hKhHCkGfskOpj0b6wN32qoNkWsWCt6JmO5uvzgFIaGvdlxv8IlHQc1svwr3OkuANk6OhLm0y0KtjkH2X3VQdtGdmmHWU");
           formData.append('grant_type', "password");
-      
+
           const config = {
             headers: {
               'Content-Type': 'multipart/form-data', 
@@ -49,11 +51,9 @@ const Login = () => {
   return (
       <View style={styles.container}>
           <Text style={styles.title}>Login</Text>
-          <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Tên đăng nhập..." style={LoginStyle.input} />
-          <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Mật khẩu..." style={LoginStyle.input} />
-          <TouchableOpacity onPress={login} >
-              <Text style={LoginStyle.button}>Login</Text>
-          </TouchableOpacity>
+          <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Tên đăng nhập..." style={LoginStyle.input} right={<TextInput.Icon icon="account"/>}/>
+          <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Mật khẩu..." style={LoginStyle.input} right={<TextInput.Icon icon="eye"/>}/>
+          <Button loading={loading} icon="account" mode="contained" onPress={login}>ĐĂNG NHẬP</Button>
       </View>
   )
 }

@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Image, TextInput, TouchableOpacity } from 'react-native';
 import API, { BASE_URL, authAPI, endpoints } from "../../configs/API";
 import moment from 'moment';
-import MyStyles from '../../styles/MyStyles';
-import { height } from '@fortawesome/free-solid-svg-icons/fa0';
 import MyContext from '../../configs/MyContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -69,7 +67,7 @@ const ChuyenXeDetail = ({ route }) => {
     };
 
     const cancelComment = () => {
-        setContextCom(''); // Xóa nội dung bình luận
+        setContextCom(''); 
     };
 
     const formDate = (date) => {
@@ -90,8 +88,12 @@ const ChuyenXeDetail = ({ route }) => {
         navigation.navigate('Chuyến Xe', {TuyenXeID});
     }
 
-    const khach = (ChuyenXeID) => {
+    const dat = (ChuyenXeID) => {
         navigation.navigate('Đặt Vé', {ChuyenXeID});
+    }
+
+    const sua = (ChuyenXeID) => {
+        navigation.navigate('Sửa Chuyến Xe', {ChuyenXeID})
     }
 
     return (
@@ -126,7 +128,7 @@ const ChuyenXeDetail = ({ route }) => {
                                     <Button 
                                         title="Đặt vé" 
                                         onPress={() => {
-                                            khach(c.id)
+                                            dat(c.id)
                                         }} 
                                     />
                                 ) : (
@@ -136,6 +138,9 @@ const ChuyenXeDetail = ({ route }) => {
                                             setViewComments(true);
                                         }} 
                                     />
+                                )}
+                                {user && user.Loai_NguoiDung === "1" && (
+                                     <Button title='Chỉnh Sửa' onPress={() => sua(c.id)} style={styles.button}/>
                                 )}
                                 <Button title='Quay lại' onPress={() => quaylai(c.Ma_Tuyen)} style={styles.button}/>
                             </View>

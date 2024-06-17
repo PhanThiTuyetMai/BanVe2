@@ -24,30 +24,43 @@ const NhanVienDetail = ({ route }) => {
   }, [NhanVienID]);
 
   const XoaNhanVien = async () => {
-    try{
-      const res = await API.delete(`${endpoints['nhanvien']}${NhanVienID}/Xoa_NV/`);
-      if (res.status === 204) {
-        console.log('Nhân viên được xóa thành công');
-        // Xử lý khi nhân viên được xóa thành công
-      } else {
-        console.error('Không thể xóa nhân viên');
-        // Xử lý trường hợp không thể xóa nhân viên
-      }
-      console.log('Thông tin nhân viên đã được xóa');
       Alert.alert(
-          'Xóa thành công',
-          'Bạn vui lòng quay lại trang Nhân Viên để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+          'Xác nhận xóa',
+          'Bạn có chắc chắn muốn xóa nhân viên này?',
           [
               {
-                  text: 'OK',
-                  onPress: () => navigation.navigate('Nhân Viên')
+                  text: 'Hủy',
+                  style: 'cancel',
+              },
+              {
+                  text: 'Xóa',
+                  onPress: async () => {
+                      try {
+                          const res = await API.delete(`${endpoints['nhanvien']}${NhanVienID}/Xoa_NV/`);
+                          if (res.status === 204) {
+                              console.log('Nhân viên được xóa thành công');
+                              Alert.alert(
+                                  'Xóa thành công',
+                                  'Bạn vui lòng quay lại trang Nhân Viên để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+                                  [
+                                      {
+                                          text: 'OK',
+                                          onPress: () => navigation.navigate('Nhân Viên - Danh Sách')
+                                      },
+                                  ],
+                                  { cancelable: false }
+                              );
+                          } else {
+                              console.error('Không thể xóa nhân viên');
+                          }
+                      } catch (error) {
+                          console.error('Error:', error);
+                      }
+                  },
               },
           ],
-          {cancelable: false}
-      )
-    } catch (error) {
-      console.error('Error:', error);
-    }
+          { cancelable: false }
+      );
   };
 
   const quayLai = () => {

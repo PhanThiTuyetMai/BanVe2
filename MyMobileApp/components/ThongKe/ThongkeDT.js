@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { BarChart } from 'react-native-chart-kit';
 import API, { endpoints } from '../../configs/API';
@@ -72,7 +72,8 @@ const ThongKeDT = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView>
+            <View style={styles.container}>
             <View>
                 <Text style={{fontSize: 20, fontWeight:'bold', fontStyle:'italic', marginTop: 8}}>BIỂU ĐỒ DOANH THU</Text>
             </View>
@@ -157,7 +158,8 @@ const ThongKeDT = () => {
                 withHorizontalLabels={false}
                 fromZero={true}
             />
-        </View>
+            </View>
+        </ScrollView>
     );
 };
 
