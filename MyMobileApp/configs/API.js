@@ -22,7 +22,10 @@ export const endpoints = {
     'them_TX': 'TaiXe/Them_TX/',
     'them_Ve': 'VeXe/Them_VeXe/',
     'tuyenxe': '/TuyenXe/',
+    'them_tuyenXe': '/TuyenXe/Them_TuyenXe/',
+    'them_chuyenXe': 'ChuyenXe/Them_ChuyenXe/',
     'chuyenxe': '/ChuyenXe/',
+    'Register': '/users/',
     'login': '/o/token/',
     'current-user': '/users/current_user/',
     'comments': (chuyenxeID) => `/ChuyenXe/${chuyenxeID}/comments`,
@@ -31,12 +34,14 @@ export const endpoints = {
     'trang_thai_ghe': (gheID) => `/Ghe/${gheID}/CapNhat_TT/`,
 };
 
-export const authAPI = (accessToken) => axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        Authorization: `bearer ${accessToken?accessToken:AsyncStorage.getItem("access_token")}`
-    }
-})
+export const authAPI = (accessToken) => {
+    return axios.create({
+        baseURL: BASE_URL,
+        headers: {
+            Authorization: `bearer ${accessToken?accessToken:AsyncStorage.getItem("access_token")}`
+        }
+    });
+}
 
 export default axios.create({
     baseURL: BASE_URL

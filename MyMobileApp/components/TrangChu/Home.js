@@ -1,24 +1,24 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
+import MyStyles from "../../styles/MyStyles";
+import Footer from "../../styles/Footer";
 
-const Home = () => {
+
+const Home = ({navigation}) => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.text}>TRANG CHU NHAAAAAAAAAAA</Text>
+        <View style={MyStyles.container}>
+            <ScrollView>
+                <Text style={MyStyles.subject}>TRANG CHỦ</Text>
+                <Footer/>
+            </ScrollView>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={[MyStyles.text, MyStyles.margin]}>Đăng ký</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={[MyStyles.text, MyStyles.margin]}>Đăng nhập</Text>
+            </TouchableOpacity> */}
         </View>
     );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-});
+}
 
 export default Home;

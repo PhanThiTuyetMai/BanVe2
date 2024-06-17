@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useReducer, useState } from "react";
+import React, { useReducer } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -32,6 +32,12 @@ import Thongke from './components/ThongKe/TCThongKe';
 import Profile from './components/User/profile';
 import ChuyenTaiXe from './components/TaiXe/TaiXeChuyen';
 import SuaChuyenXe from './components/ChuyenXe/SuaChuyenXe';
+import Register from './components/User/Register';
+import RegisterAdmin from './components/User/RegisterAdmin';
+import HomeAdmin from './components/TrangChu/HomeAdmin';
+import SuaTuyenXe from './components/TuyenXe/SuaTuyenXe';
+import ThemTuyenXe from './components/TuyenXe/ThemTuyenXe';
+import ThemCX from './components/ChuyenXe/ThemChuyenXe';
 
 
 const Drawer = createDrawerNavigator();
@@ -48,6 +54,7 @@ function DrawerNavigator() {
           <>
             <Drawer.Screen name='Trang Chủ' component={Home} />
             <Drawer.Screen name='Login' component={Login} />
+            <Drawer.Screen name='Đăng Ký' component={Register} />
           </>
         ) : (
           <>
@@ -58,6 +65,8 @@ function DrawerNavigator() {
         )}
         {user && user.Loai_NguoiDung === "1" && (
           <>
+            <Drawer.Screen name="HomeAdmin" component={HomeAdmin} options={{title: 'Trang tâm quản lý'}} />
+            <Drawer.Screen name="RegisterAdmin" component={RegisterAdmin} options={{title: 'Đăng ký tài khoản nhân viên'}} />
             <Drawer.Screen name="Nhân Viên" component={NhanVienStackNavigator} />
             <Drawer.Screen name="Khách Hàng" component={KhachHangStackNavigator} />
             <Drawer.Screen name='Tài Xế' component={TaiXeStackNavigator} />
@@ -128,7 +137,10 @@ function TuyenXeNavigator () {
   return (
     <Stack.Navigator>
       <Drawer.Screen name='Danh Sách Tuyến Xe' component={TuyenXe} />
+      <Drawer.Screen name="Chỉnh sửa tuyến xe" component={SuaTuyenXe} options={{ headerShown: false }}/>
+      <Drawer.Screen name='Thêm Tuyến Xe' component={ThemTuyenXe} options={{ headerShown: false }}/>
       <Drawer.Screen name='Chuyến Xe' component={ChuyenXe} options={{ headerShown: false }}/>
+      <Drawer.Screen name='Thêm Chuyến Xe' component={ThemCX} options={{ headerShown: false }} />
       <Drawer.Screen name='ChuyenXeDetail' component={ChuyenXeDetail} options={{ headerShown: false }}/>
       <Drawer.Screen name='Sửa Chuyến Xe' component={SuaChuyenXe} options={{ headerShown: false }}/>
       <Drawer.Screen name='Đặt Vé' component={DatVe} options={{ headerShown: false }}/>

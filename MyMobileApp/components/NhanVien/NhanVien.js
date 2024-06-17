@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, ActivityIndicator, Image, ScrollView, Button, Text, StyleSheet, TouchableOpacity, RefreshControl } from "react-native"
 import { List, Searchbar } from "react-native-paper";
 import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
 import "moment/locale/vi"
+import MyContext from "../../configs/MyContext";
 
 const NhanVien = () => {
     const navigation = useNavigation();
+    const [user, dispatch] = useContext(MyContext);
     const [nhanvien, setNhanVien] = useState([]);
     const [loading, setLoading] = useState(false);
     const [q, setQ] = useState("");
@@ -61,7 +63,7 @@ const NhanVien = () => {
     }
 
     const goToHome = () => {
-        navigation.navigate('Trang Chủ');
+        navigation.navigate((user.username).toString());
     }
 
     const gotoDetail = (NhanVienID) => {

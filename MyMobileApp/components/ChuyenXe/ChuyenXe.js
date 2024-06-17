@@ -230,6 +230,10 @@ const ChuyenXe = ({ route }) => {
         navigation.navigate('Danh Sách Tuyến Xe');
     }
 
+    const gotoThemChuyen = (TuyenXeID) => {
+        navigation.navigate('Thêm Chuyến Xe', {TuyenXeID});
+    }
+
     return (
         <View style={MyStyles.container}>
             <View style={styles.tieude}>
@@ -406,6 +410,9 @@ const ChuyenXe = ({ route }) => {
                 <View style={styles.buttonContainer}>
                       <TouchableOpacity style={[styles.button, { width: 100 }]} onPress={goToTuyenXe}>
                         <Text>Quay lại</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={[styles.button]} onPress={() => {gotoThemChuyen(parseInt(TuyenXeID))}}>
+                        <Text>Thêm Chuyến</Text>
                       </TouchableOpacity>
                 </View>
                 {loading && <ActivityIndicator/>}

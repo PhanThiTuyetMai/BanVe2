@@ -3,19 +3,20 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 60
     }, subject: {
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "bold",
-        color: "blue"
-    }, row: {
-        flexDirection: "row",
-        flexWrap: "wrap"
+        color: "#BF6B7B",
+        marginTop: 10,
+        textAlign: "center"
     }, margin: {
-        margin: 3
+        margin: 10,
+    }, text: {
+        fontSize: 20,
     }, avatar: {
         width: 80,
         height: 80,
-        borderRadius: 20
-    }
+        borderRadius:20,
+        alignSelf: 'center',
+    }, 
 });

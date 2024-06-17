@@ -27,9 +27,8 @@ const TuyenXe = () => {
                     url = `${endpoints['tuyenxe']}?diemdi=${di}&page=${page}`;
                 } else if (den.trim() !== ''){
                     url = `${endpoints['tuyenxe']}?diemden=${den}&page=${page}`;
-                }
-                else {
-                    url = `${endpoints['tuyenxe']}`
+                } else {
+                    url = `${endpoints['tuyenxe']}?page=${page}`;
                 }
                 let res = await API.get(url);
                 if (page === 1) {
@@ -83,6 +82,10 @@ const TuyenXe = () => {
         callback(value)
     }
 
+    const gotoSuaTuyenXe = (TuyenXeID) => {
+        navigation.navigate('Chỉnh sửa tuyến xe', {TuyenXeID});
+    }
+
     return (
         <View style={MyStyles.container}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -50 }}>
@@ -101,12 +104,17 @@ const TuyenXe = () => {
                                 <List.Item style={styles.margin} 
                                     title={c.Ten_tuyen} 
                                     right={() => (
-                                        <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={() => {
-                                            Alert.alert('Lưu ý', 'Nếu bạn chưa thấy dữ liệu vui lòng Refresh');
-                                            gotoChuyenXe(parseInt(c.id))} } 
-                                        >
-                                            <Text>Tìm chuyến xe</Text>
-                                        </TouchableOpacity>
+                                        <View style={styles.buttonContainer}>
+                                            <TouchableOpacity style={[styles.button]} onPress={() => {
+                                                Alert.alert('Lưu ý', 'Nếu bạn chưa thấy dữ liệu vui lòng Refresh');
+                                                gotoChuyenXe(parseInt(c.id))} } 
+                                            >
+                                                <Text>Tìm kiếm</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={[styles.button]} onPress={() => {gotoSuaTuyenXe(parseInt(c.id))}}>
+                                                <Text>Sửa</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     )}
                                 />
                             </View>
@@ -114,6 +122,9 @@ const TuyenXe = () => {
                     ))
                 }
                 {loading && page > 1 && <ActivityIndicator/>}
+                <TouchableOpacity style={[styles.button]} onPress={() => {navigation.navigate('Thêm Tuyến Xe')}}>
+                        <Text>Thêm Tuyến Xe</Text>
+                </TouchableOpacity>
             </ScrollView>
         </View>
     )
