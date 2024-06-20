@@ -17,10 +17,23 @@ const Logout = () => {
         navigation.navigate('Login');
     }
 
-    if (user === null)
-        return <Button title="Đăng Nhập" onPress={goToLogin} />
-    
-    return <Button title="Đăng Xuất" onPress={logout} />
+    if (user === null) {
+        return (
+            <Button
+                style={{ backgroundColor: "#BF6B7B", margin: 10 }} // Thiết lập màu và margin
+                onPress={goToLogin}
+                title="Đăng nhập" // Sử dụng title thay vì children nếu không dùng mode="contained"
+            />
+        );
+    }
+
+    return (
+        <Button
+            style={{ backgroundColor: "#BF6B7B", margin: 10 }} // Thiết lập màu và margin
+            onPress={logout}
+            title="Đăng xuất" // Sử dụng title thay vì children nếu không dùng mode="contained"
+        />
+    );
 }
 
 export default Logout;

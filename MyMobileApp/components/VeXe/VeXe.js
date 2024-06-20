@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, Alert, Linking } from 'react-native';
 import MyContext from '../../configs/MyContext';
-import API, { BASE_URL, authAPI, endpoints } from '../../configs/API';
+import API, { authAPI, endpoints } from '../../configs/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomerForm from './InfoKhach';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome5 } from '@fortawesome/react-native-fontawesome';
+import { faChair } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
-import axios from 'axios';
-import { Linking } from 'react-native';
 
 const DatVe = ({ route }) => {
     const { navigate } = useNavigation();
@@ -20,6 +20,12 @@ const DatVe = ({ route }) => {
     const [tuyen, setTuyen] = useState([]);
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [le, setLe] = useState([]);
+    const colors = {
+        chon: '#0000CD',     // Màu xanh dương đậm cho ghế đang chọn
+        chonDuoc: '#006400', // Màu xanh lá cho ghế được chọn
+        trong: '#d3d3d3'     // Màu xám cho ghế còn trống
+    };
+    
 
     const loadChuyenXe = async () => {
         try {
@@ -92,7 +98,6 @@ const DatVe = ({ route }) => {
     };
     
 
-
     const giaLe = () => {
         const giaLe = chuyenxe.map(c => {
             const ngayFormatted = formDate(c.Ngay);
@@ -154,6 +159,9 @@ const DatVe = ({ route }) => {
     };
 
     const handleSubmit = async () => {
+        if(customers === null || selectedSeats === null){
+            Alert.alert("Vui lòng nhập đầy đủ thông tin!!!");
+        }
         if (user && user.Loai_NguoiDung === "3" || user.Loai_NguoiDung === "1" || user.Loai_NguoiDung === "4"){
             try {
                 // 1. Gửi thông tin của từng khách hàng qua API POST để tạo khách hàng mới
@@ -195,7 +203,7 @@ const DatVe = ({ route }) => {
                         default:
                             break;
                     }
-                    navigate ('Đơn hàng');
+                    navigate ('Danh Sách Tuyến Xe'); // Sửa Cái Này
                 }
 
                 const veID = [];
@@ -231,7 +239,7 @@ const DatVe = ({ route }) => {
                                 Ma_Ve: c,
                                 Ma_Xe: parseInt(seat.Bienso_Xe),
                                 Vi_tri_ghe_ngoi: parseInt(seat.id),
-                                Ghichu: "aaaaa",
+                                Ghichu: "Không có",
                             }));
                             ticketDetailData.push(...detailData);
                         } catch (error) {
@@ -328,8 +336,6 @@ const DatVe = ({ route }) => {
                 }
                 console.log(veID);
                 // 2.1. Thêm dữ liệu chi tiết vé cho từng ghế đã chọn của khách hàng
-                const ticketDetailData = [];
-                let a = 0;
                 for (const c of veID) {
                     const ticketDetailData = []; // Khởi tạo mảng mới cho mỗi vé xe
                     await Promise.all(selectedSeats.map(async seat => {
@@ -388,16 +394,14 @@ const DatVe = ({ route }) => {
                     }
                 }));
             } catch (error) {
-                console.error(error);
                 Alert.alert('Có lỗi xảy ra khi thực hiện đặt vé. Vui lòng thử lại sau!');
             }
         }
     };
-    
-    
+
     return (
         <ScrollView>
-            <Text style={styles.title}>Thông tin đặt vé</Text>
+            <Text style={styles.title}>THÔNG TIN ĐẶT VÉ</Text>
             {/* Thông tin chuyến xe */}
             <View style={{ flex: 1 }}>
                 <Text style={styles.headerText}>Chuyến Xe</Text>
@@ -414,6 +418,7 @@ const DatVe = ({ route }) => {
                     </View>
                 ))}
             </View>
+
             {/* Thông tin ghế */}
             <View style={{ marginTop: 20 }}>
                 <Text style={styles.headerText}>Ghế</Text>
@@ -435,6 +440,14 @@ const DatVe = ({ route }) => {
                         <Text style={styles.seatText}>{c.So_ghe}</Text>
                     </TouchableOpacity>
                 ))}
+                </View>
+                <View style={[styles.legendItem, {marginTop: 15}]}>
+                    <View style={[styles.legendSquare, {backgroundColor: colors.chon}]} />
+                    <Text style={styles.legendText}>Ghế đang chọn</Text>
+                    <View style={[styles.legendSquare, {backgroundColor: colors.chonDuoc}]} />
+                    <Text style={styles.legendText}>Ghế đã chọn</Text>
+                    <View style={[styles.legendSquare, {backgroundColor: colors.trong}]} />
+                    <Text style={styles.legendText}>Ghế trống</Text>
                 </View>
             </View>
             {/* Thông tin khách hàng */}
@@ -468,7 +481,7 @@ const DatVe = ({ route }) => {
                     style={[styles.paymentMethodButton, paymentMethod === 'zalo' && styles.selectedPaymentMethod]}
                     onPress={() => handlePaymentMethodSelect('zalo')}
                 >
-                    <Text style={styles.paymentMethodText}>Thanh toán qua Zalo</Text>
+                    <Text style={styles.paymentMethodText}>Thanh toán qua ZaloPay</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.paymentMethodButton, paymentMethod === 'cash' && styles.selectedPaymentMethod]}
@@ -499,6 +512,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        marginTop: 15,
+        marginLeft: 100,
+        color: 'red'
     },
     header: {
         flexDirection: 'row',
@@ -512,6 +528,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: 18,
+        color: 'blue',
     },
     row: {
         flexDirection: 'row',
@@ -563,6 +580,21 @@ const styles = StyleSheet.create({
     },
     paymentMethodText: {
         fontSize: 16,
+    },
+    legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,  // Khoảng cách giữa các phần tử
+    },
+    legendSquare: {
+        width: 20,  // Độ rộng của hình vuông
+        height: 20, // Độ cao của hình vuông
+        borderRadius: 5,
+        marginRight: 10, // Khoảng cách giữa hình vuông và chữ
+    },
+    legendText: {
+        fontSize: 16, // Kích thước của chữ
+        marginRight: 15
     },
 });
 

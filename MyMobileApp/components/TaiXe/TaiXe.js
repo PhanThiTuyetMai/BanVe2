@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, ActivityIndicator, Image, ScrollView, Button, Text, StyleSheet, TouchableOpacity, RefreshControl } from "react-native"
+import { View, ActivityIndicator, Image, ScrollView, Text, StyleSheet, TouchableOpacity, RefreshControl } from "react-native"
 import { List, Searchbar } from "react-native-paper";
 import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
@@ -120,12 +120,12 @@ const TaiXe = () => {
                     ))
                 }
                 <View style={styles.buttonContainer}>
-                      <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={goToHome}>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={goToHome}>
                         <Text>Quay lại</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={gotoAdd}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={gotoAdd}>
                         <Text style={styles.buttonText}>Thêm</Text>
-                      </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
                 {loading && page > 1 && <ActivityIndicator/>}
             </ScrollView>
@@ -135,19 +135,18 @@ const TaiXe = () => {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
     },
     button: {
-      alignItems: 'center',
-      backgroundColor: 'pink',
-      padding: 10,
-      marginVertical: 10,
-      borderRadius: 5,
+        alignItems: 'center',
+        backgroundColor: 'pink',
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
     },
-  });
+});
 
-  export default TaiXe; 
-  
+export default TaiXe;
   

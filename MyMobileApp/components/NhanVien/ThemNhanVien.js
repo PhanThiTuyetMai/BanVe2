@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Image, View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Image, View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BASE_URL, endpoints } from '../../configs/API';
+import { Button, TextInput } from 'react-native-paper';
 
-export default function ThemNV({navigation}) {
-      
+const ThemNV = ({navigation}) => {
       const [name, setName] = useState('');
       const [ngaySinh, setNgaySinh] = useState('');
       const [gioiTinh, setGioiTinh] = useState('');
@@ -35,7 +35,7 @@ export default function ThemNV({navigation}) {
 
           try {
             if (!name || !ngaySinh || !gioiTinh || !diaChi || !cmnd || !dienThoai || !email || !avatar) {
-              alert('Vui lòng nhập đầy đủ thông tin và chọn ảnh đại diện');
+              Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin và chọn ảnh đại diện');
               return;
             }
         
@@ -61,7 +61,7 @@ export default function ThemNV({navigation}) {
             }
         
             // Nếu thành công, hiển thị thông báo và xóa các trường nhập
-            alert('Thêm nhân viên thành công!');
+            Alert.alert('Thông Báo','Thêm nhân viên thành công!');
             setName('');
             setNgaySinh('');
             setGioiTinh('');
@@ -72,7 +72,7 @@ export default function ThemNV({navigation}) {
             setAvatar(null);
           } catch (error) {
             console.error('Lỗi:', error.message);
-            alert('Đã xảy ra lỗi khi thêm nhân viên');
+            Alert.alert('Lưu Ý', 'Đã xảy ra lỗi khi thêm nhân viên');
           }
       };
       
@@ -80,68 +80,70 @@ export default function ThemNV({navigation}) {
         navigation.navigate('Nhân Viên - Danh Sách');
       }
 
-      return (
+    return (
+      <KeyboardAvoidingView>
           <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={{marginTop: 15}}>
-            <TextInput
-                style={styles.input}
-                placeholder="Tên nhân viên"
-                value={name}
-                onChangeText={text => setName(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Ngày sinh"
-                value={ngaySinh}
-                onChangeText={text => setNgaySinh(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Giới tính"
-                value={gioiTinh}
-                onChangeText={text => setGioiTinh(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Địa chỉ"
-                value={diaChi}
-                onChangeText={text => setDiaChi(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="CMND"
-                value={cmnd}
-                onChangeText={text => setCMND(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Điện thoại"
-                value={dienThoai}
-                onChangeText={text => setDienThoai(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={text => setEmail(text)}
-            />
-            <View style={{marginBottom: 30}}>
-                <View style={styles.imagePickerContainer}>
-                  <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
-                  <Button title="Chọn ảnh" onPress={pickImage} />
+                <TextInput
+                    style={styles.input}
+                    label="Họ và nhân viên"
+                    value={name}
+                    onChangeText={text => setName(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Ngày sinh"
+                    value={ngaySinh}
+                    onChangeText={text => setNgaySinh(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Giới tính"
+                    value={gioiTinh}
+                    onChangeText={text => setGioiTinh(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Địa chỉ"
+                    value={diaChi}
+                    onChangeText={text => setDiaChi(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="CMND"
+                    value={cmnd}
+                    onChangeText={text => setCMND(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Điện thoại"
+                    value={dienThoai}
+                    onChangeText={text => setDienThoai(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                />
+                <View style={{marginBottom: 30}}>
+                    <View style={styles.imagePickerContainer}>
+                      <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
+                      <Button style={{backgroundColor: "#4f6e4b"}} mode="contained" onPress={pickImage}>CHỌN ẢNH</Button>
+                    </View>
+                    {avatar && <Image source={{ uri: `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar}`}} style={styles.image} />}
                 </View>
-                {avatar && <Image source={{ uri: `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar}`}} style={styles.image} />}
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, { width: 'auto'}]} onPress={quayLai}>
-                    <Text style={styles.buttonText}>Quay Lại</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={addEmployee}>
-                    <Text style={styles.buttonText}>Thêm nhân viên</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button, { width: 'auto'}]} onPress={quayLai}>
+                        <Text style={styles.buttonText}>Quay Lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={addEmployee}>
+                        <Text style={styles.buttonText}>Thêm nhân viên</Text>
+                    </TouchableOpacity>
+                </View>
           </ScrollView>
-      );
-  };
+      </KeyboardAvoidingView>
+    );
+};
 
 const styles = StyleSheet.create({
     title: {
@@ -156,12 +158,13 @@ const styles = StyleSheet.create({
     },
     input: {
       marginBottom: 10,
-      width: 200,
-      height: 40,
+      width: '90%',
+      height: 55,
       borderColor: 'gray',
       borderWidth: 1,
       paddingHorizontal: 10,
       borderRadius: 5,
+      backgroundColor:'#F2CED5'
     },
     image: {
       width: 200,
@@ -176,18 +179,19 @@ const styles = StyleSheet.create({
       marginTop: -20,
     },
     button: {
-        backgroundColor: '#007bff',
-        paddingVertical: 12,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        marginHorizontal: 5,
+      backgroundColor: '#BF6B7B',
+      paddingVertical: 12,
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
+      marginHorizontal: 5,
     },
     buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
 });  
 
+export default ThemNV;

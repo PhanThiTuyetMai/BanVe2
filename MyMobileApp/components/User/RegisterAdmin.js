@@ -166,12 +166,9 @@ const RegisterAdmin = () => {
 
                     {/* Hiện avatar */}
                     {user.avatar && <Image source={{uri: user.avatar.uri}} style={MyStyles.avatar} />}
-
                     <Button style={{backgroundColor: "#BF6B7B"}} loading={loading} icon="account" mode="contained" onPress={register}>ĐĂNG KÝ</Button>
                 </ScrollView>
             </KeyboardAvoidingView>
-            
-            
         </View>
     );
 }

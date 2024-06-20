@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Image, View, TextInput, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import API, { BASE_URL, endpoints } from '../../configs/API';
 import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
+import { TextInput } from 'react-native-paper';
 
 export default function ThemCX({navigation, route}) {
     const { TuyenXeID } = route.params;
@@ -65,14 +66,14 @@ export default function ThemCX({navigation, route}) {
     const themChuyen = async () => {
         try {
         if (!name || !ngay || !giodi || !gioden || !chotrong || !noidi || !noiden || !mataixe || !maxe) {
-            alert('Vui lòng nhập đầy đủ thông tin');
+            Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin');
             return;
         }
-        const formattedNgay = moment(ngay).format('YYYY-MM-DD');
+        const formattedNgay = moment(ngay, 'DD/MM/YYYY').format('YYYY-MM-DD');
         const response = await fetch(BASE_URL + endpoints['them_chuyenXe'], {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
             TenChuyenXe: name,
@@ -91,7 +92,7 @@ export default function ThemCX({navigation, route}) {
         if (!response.ok) {
             throw new Error('Đã xảy ra lỗi khi thêm chuyến xe');
         }
-            alert('Thêm chuyến xe thành công!.');
+            Alert.alert('Thông Báo', 'Thêm chuyến xe thành công!.');
             setName('');
             setNgay('');
             setGioDi('');
@@ -104,7 +105,7 @@ export default function ThemCX({navigation, route}) {
             quayLai(TuyenXeID);
         } catch (error) {
         console.error('Lỗi:', error.message);
-        alert('Đã xảy ra lỗi khi thêm chuyến xe');
+        Alert.alert('Lưu Ý', 'Đã xảy ra lỗi khi thêm chuyến xe');
         }
     };
 
@@ -112,92 +113,96 @@ export default function ThemCX({navigation, route}) {
         navigation.navigate('Chuyến Xe', {TuyenXeID});
     }
 
+
     return (
-        <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={{ marginTop: 15 }}>
-            <TextInput
-                style={styles.input}
-                placeholder="Tên chuyến xe: "
-                value={name}
-                onChangeText={text => setName(text)}
-            />
-            <Text>Nhập ngày theo định dạng ngay-thang-nam</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Ngày: "
-                value={ngay}
-                onChangeText={text => setNgay(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Giờ Đi: "
-                value={giodi}
-                onChangeText={text => setGioDi(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Giờ Đến: "
-                value={gioden}
-                onChangeText={text => setGioDen(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Số Chỗ: "
-                value={chotrong}
-                onChangeText={text => setChoTrong(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Nơi Đi: "
-                value={noidi}
-                onChangeText={text => setNoiDi(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Nơi Đến: "
-                value={noiden}
-                onChangeText={text => setNoiDen(text)}
-            />
-            <Picker
-                selectedValue={mataixe}
-                style={styles.input}
-                onValueChange={(itemValue, itemIndex) => setMaTaiXe(itemValue)}
-            >
-                <Picker.Item label="Chọn tài xế" value="" />
-                {taixe.map((tx, index) => (
-                <Picker.Item key={index} label={tx.Ten_taixe} value={tx.id} />
-                ))}
-            </Picker>
-            <Picker
-                selectedValue={maxe}
-                style={styles.input}
-                onValueChange={(itemValue, itemIndex) => setMaXe(itemValue)}
-            >
-                <Picker.Item label="Chọn xe" value="" />
-                {xe.map((x, index) => (
-                <Picker.Item key={index} label={x.Bien_so} value={x.id} />
-                ))}
-            </Picker>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button]} onPress={() => {quayLai(parseInt(TuyenXeID))}}>
-                    <Text>Quay Lại</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={themChuyen}>
-                    <Text style={styles.buttonText}>Thêm chuyến xe</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+        <KeyboardAvoidingView>
+            <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={{ marginTop: 15 }}>
+                <TextInput
+                    style={styles.input}
+                    label="Tên chuyến xe"
+                    value={name}
+                    onChangeText={text => setName(text)}
+                />
+                <Text> Vui lòng nhập ngày theo định dạng DD/MM/YYYY !</Text>
+                <TextInput
+                    style={styles.input}
+                    label="Ngày"
+                    value={ngay}
+                    onChangeText={text => setNgay(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Giờ Đi"
+                    value={giodi}
+                    onChangeText={text => setGioDi(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Giờ Đến"
+                    value={gioden}
+                    onChangeText={text => setGioDen(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Số Chỗ"
+                    value={chotrong}
+                    onChangeText={text => setChoTrong(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Nơi Đi"
+                    value={noidi}
+                    onChangeText={text => setNoiDi(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    label="Nơi Đến"
+                    value={noiden}
+                    onChangeText={text => setNoiDen(text)}
+                />
+                <Picker
+                    selectedValue={mataixe}
+                    style={styles.input}
+                    onValueChange={(itemValue, itemIndex) => setMaTaiXe(itemValue)}
+                >
+                    <Picker.Item label="Chọn tài xế" value="" />
+                    {taixe.map((tx, index) => (
+                    <Picker.Item key={index} label={tx.Ten_taixe} value={tx.id} />
+                    ))}
+                </Picker>
+                <Picker
+                    selectedValue={maxe}
+                    style={styles.input}
+                    onValueChange={(itemValue, itemIndex) => setMaXe(itemValue)}
+                >
+                    <Picker.Item label="Chọn xe" value="" />
+                    {xe.map((x, index) => (
+                    <Picker.Item key={index} label={x.Bien_so} value={x.id} />
+                    ))}
+                </Picker>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button]} onPress={() => {quayLai(parseInt(TuyenXeID))}}>
+                        <Text style={styles.buttonText}>Quay Lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={themChuyen}>
+                        <Text style={styles.buttonText}>Thêm chuyến xe</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     input: {
         marginBottom: 10,
-        width: 200,
-        height: 40,
+        width: '90%',
+        height: 55,
         borderColor: 'gray',
         borderWidth: 1,
         paddingHorizontal: 10,
         borderRadius: 5,
+        backgroundColor:'#F2CED5'
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -207,7 +212,7 @@ const styles = StyleSheet.create({
         marginBottom: 50,
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#BF6B7B',
         paddingVertical: 12,
         borderRadius: 5,
         alignItems: 'center',
@@ -221,4 +226,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-

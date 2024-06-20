@@ -10,7 +10,6 @@ import { StyleSheet } from "react-native";
 import { normalizeUnits } from "moment";
 
 const Register = () => {
-    //state là đối tượng
     const [user, setUser] = useState({Loai_NguoiDung: 3});
     const [err, setErr] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -52,7 +51,7 @@ const Register = () => {
         
         //Kiểm tra xem quyền truy cập có được cấp hay không
         if (status !== 'granted') {
-            alert("Thông báo","Permissions denied!");
+            alert("Thông báo", "Permissions denied!");
         } else {
             //Mở thư viện để người dùng chọn ảnh
             let result = await ImagePicker.launchImageLibraryAsync();
@@ -116,9 +115,9 @@ const Register = () => {
 
     return (
         <View style={[MyStyles.container, MyStyles.margin]}>
-            <Text style={MyStyles.subject}>ĐĂNG KÝ TÀI KHOẢN</Text>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'position'}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 <ScrollView>
+                    <Text style={MyStyles.subject}>ĐĂNG KÝ TÀI KHOẢN</Text>
                     {fields.map(c => <TextInput value={user[c.name]} onChangeText={t => updateState(c.name, t)}
                     style={[styles.textInput]} 
                     key={c.name} 
@@ -139,8 +138,6 @@ const Register = () => {
                     <Button style={{backgroundColor: "#BF6B7B"}} loading={loading} icon="account" mode="contained" onPress={register}>ĐĂNG KÝ</Button>
                 </ScrollView>
             </KeyboardAvoidingView>
-            
-            
         </View>
     );
 }
@@ -160,10 +157,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     textInput: {
-        height: 50,
-        width: '100%',
-        paddingLeft: 5,
-        marginBottom: 8,
+        marginBottom: 20,
         backgroundColor: '#F2CED5',
     },
     avatar: {

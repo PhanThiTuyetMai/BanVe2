@@ -71,11 +71,11 @@ const NhanVien = () => {
     }
 
     const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-            loadNV();
-        setRefreshing(false);
-    }, 2000);
+        setRefreshing(true);
+        setTimeout(() => {
+                loadNV();
+            setRefreshing(false);
+        }, 2000);
     };
 
     const gotoAdd = () => {
@@ -89,7 +89,7 @@ const NhanVien = () => {
 
     return (
         <View style={MyStyles.container}>
-            <View style={{marginTop: -50}}>
+            <View style={{marginTop: 10}}>
                 <Searchbar placeholder="Nhập id hoặc tên của nhân viên..." onChangeText={(t) => search(t, setQ)} value={q} />
             </View>
             <ScrollView refreshControl={<RefreshControl
@@ -119,12 +119,12 @@ const NhanVien = () => {
                     ))
                 }
                 <View style={styles.buttonContainer}>
-                      <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={goToHome}>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={goToHome}>
                         <Text>Quay lại</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={gotoAdd}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={gotoAdd}>
                         <Text style={styles.buttonText}>Thêm</Text>
-                      </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
                 {loading && page > 1 && <ActivityIndicator/>}
             </ScrollView>
@@ -134,19 +134,18 @@ const NhanVien = () => {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
     },
     button: {
-      alignItems: 'center',
-      backgroundColor: 'pink',
-      padding: 10,
-      marginVertical: 10,
-      borderRadius: 5,
+        alignItems: 'center',
+        backgroundColor: 'pink',
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
     },
-  });
+});
 
-  export default NhanVien; 
-  
+export default NhanVien; 
   

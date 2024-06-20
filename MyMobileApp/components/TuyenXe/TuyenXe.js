@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, ActivityIndicator, Image, ScrollView, Button, Text, StyleSheet, TouchableOpacity, RefreshControl } from "react-native"
 import { List, Searchbar } from "react-native-paper";
 import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
 import "moment/locale/vi"
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Alert } from "react-native";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import MyContext from "../../configs/MyContext";
 
 const TuyenXe = () => {
     const navigation = useNavigation();
     const [tuyenxe, setTuyenXe] = useState([]);
+    const [user, dispatch] = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [di, setDi] = useState("");
     const [den, setDen] = useState("");
@@ -70,11 +72,11 @@ const TuyenXe = () => {
     }
 
     const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-            loadTX();
-        setRefreshing(false);
-    }, 2000);
+        setRefreshing(true);
+        setTimeout(() => {
+                loadTX();
+                setRefreshing(false);
+        }, 2000);
     };
 
     const search = (value, callback) => {
@@ -88,7 +90,7 @@ const TuyenXe = () => {
 
     return (
         <View style={MyStyles.container}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -50 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 14 }}>
                 <Searchbar placeholder="Nhập điểm đi..." onChangeText={(t) => search(t, setDi)} value={di} style={{width: 190}} />
                 <Icon name="arrow-right" size={27} color="#900" />
                 <Searchbar placeholder="Nhập điểm đến..." onChangeText={(t) => search(t, setDen)} value={den} style={{width: 190}}/>
@@ -106,15 +108,17 @@ const TuyenXe = () => {
                                     right={() => (
                                         <View style={styles.buttonContainer}>
                                             <TouchableOpacity style={[styles.button]} onPress={() => {
-                                                Alert.alert('Lưu ý', 'Nếu bạn chưa thấy dữ liệu vui lòng Refresh');
-                                                gotoChuyenXe(parseInt(c.id))} } 
-                                            >
-                                                <Text>Tìm kiếm</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={[styles.button]} onPress={() => {gotoSuaTuyenXe(parseInt(c.id))}}>
-                                                <Text>Sửa</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                                    Alert.alert('Lưu ý', 'Nếu bạn chưa thấy dữ liệu vui lòng tải lại trang');
+                                                    gotoChuyenXe(parseInt(c.id))} } 
+                                                >
+                                                        <Text>Tìm kiếm</Text>
+                                                </TouchableOpacity>
+                                                {user.Loai_NguoiDung === "1" && (
+                                                    <TouchableOpacity style={[styles.button, { marginLeft: 15 }]} onPress={gotoSuaTuyenXe}>
+                                                        <Text>Sửa</Text>
+                                                    </TouchableOpacity>
+                                                )}
+                                            </View>
                                     )}
                                 />
                             </View>
@@ -146,5 +150,3 @@ const styles = StyleSheet.create({
   });
 
   export default TuyenXe; 
-  
-  

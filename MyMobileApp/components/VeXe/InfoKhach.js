@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, Button, Alert } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
 const CustomerForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
@@ -18,13 +19,13 @@ const CustomerForm = ({ onSubmit }) => {
         setDienThoai('');
         setCMND('');
     } else {
-      Alert.alert('Vui lòng điền đầy đủ thông tin khách hàng!');
+      Alert.alert('Lưu Ý', 'Vui lòng điền đầy đủ thông tin khách hàng!');
     }
   };
 
   return (
     <View>
-      <Text style={{ fontSize: 18, marginBottom: 20, marginTop: 20, fontWeight: 'bold', marginLeft: 100}}>Thông Tin Khách hàng</Text>
+      <Text style={{ fontSize: 18, marginBottom: 20, marginTop: 20, fontWeight: 'bold', marginLeft: 115, color: 'blue'}}>Thông Tin Khách hàng</Text>
       <TextInput
         placeholder="Tên"
         value={name}

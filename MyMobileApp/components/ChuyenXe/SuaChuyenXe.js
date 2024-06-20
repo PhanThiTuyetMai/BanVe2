@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Alert, View, TouchableOpacity, Button, Image} from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, Text, Alert, View, TouchableOpacity, Button, Image, KeyboardAvoidingView} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
+import { TextInput } from 'react-native-paper';
 
 const SuaChuyenXe = ({ route }) => {
 
@@ -228,80 +229,203 @@ const SuaChuyenXe = ({ route }) => {
         }
     };
 
+//     return (
+//         <ScrollView style={styles.container}>
+//             <Text style={styles.label}>Tên chuyến xe:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={name}
+//                 onChangeText={setName}
+//             />
+//             <Text style={styles.label}>Ngày:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={ngay}
+//                 onChangeText={setNgay}
+//             />
+//             <Text style={styles.label}>Giờ Đi:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={gioDi}
+//                 onChangeText={setGioDi}
+//             />
+//             <Text style={styles.label}>Giờ Đến:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={gioDen}
+//                 onChangeText={setGioDen}
+//             />
+//             <Text style={styles.label}>Số lượng ghế:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={chotrong}
+//                 onChangeText={setChoTrong}
+//             />
+//             <Text style={styles.label}>Nơi Đi:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={noidi}
+//                 onChangeText={setNoiDi}
+//             />
+//             <Text style={styles.label}>Nơi Đến:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={noiden}
+//                 onChangeText={setNoiDen}
+//             />
+//             <Text style={styles.label}>Tài Xế:</Text>
+//             <Picker
+//                 selectedValue={selectedTaiXe}
+//                 onValueChange={handleTaiXeChange}
+//             >
+//                 {taixe && taixe.map((c) => (
+//                     <Picker.Item key={c.id} label={c.Ten_taixe} value={c.id} />
+//                 ))}
+//             </Picker>
+//             <Text style={styles.label}>Xe:</Text>
+//             <Picker
+//                 selectedValue={selectedXe}
+//                 onValueChange={handleXeChange}
+//             >
+//                 {xe && xe.map((item) => (
+//                     <Picker.Item key={item.id} label={item.Ten_xe} value={item.id} />
+//                 ))}
+//             </Picker>
+//             <View style={styles.buttonContainer}>
+//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={quaylai}>
+//                     <Text style={styles.buttonText}>Quay Lại</Text>
+//                 </TouchableOpacity>
+//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={XoaChuyenXe}>
+//                     <Text style={styles.buttonText}>Xóa</Text>
+//                 </TouchableOpacity>
+//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaChuyenXe}>
+//                     <Text style={styles.buttonText}>Cập nhật</Text>
+//                 </TouchableOpacity>
+//             </View>
+//         </ScrollView>
+//     ); 
+// }
+
+// const styles = StyleSheet.create({
+//     container: {
+//         padding: 20,
+//     },
+//     label: {
+//         marginBottom: 5,
+//         fontSize: 16,
+//         fontWeight: 'bold',
+//     },
+//     input: {
+//         marginBottom: 15,
+//         paddingVertical: 10,
+//         paddingHorizontal: 15,
+//         borderWidth: 1,
+//         borderColor: '#ccc',
+//         borderRadius: 5,
+//         fontSize: 16,
+//     },
+//     buttonContainer: {
+//         flexDirection: 'row',
+//         justifyContent: 'space-between',
+//         paddingHorizontal: 20,
+//         marginBottom: 35,
+//     },
+//     button: {
+//         backgroundColor: '#007bff',
+//         paddingVertical: 12,
+//         borderRadius: 5,
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         flex: 1,
+//         marginHorizontal: 5,
+//     },
+//     buttonText: {
+//         color: '#fff',
+//         fontSize: 16,
+//         fontWeight: 'bold',
+//     },
+// });
+
+// export default SuaChuyenXe;
+
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.label}>Tên chuyến xe:</Text>
-            <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-            />
-            <Text style={styles.label}>Ngày:</Text>
-            <TextInput
-                style={styles.input}
-                value={ngay}
-                onChangeText={setNgay}
-            />
-            <Text style={styles.label}>Giờ Đi:</Text>
-            <TextInput
-                style={styles.input}
-                value={gioDi}
-                onChangeText={setGioDi}
-            />
-            <Text style={styles.label}>Giờ Đến:</Text>
-            <TextInput
-                style={styles.input}
-                value={gioDen}
-                onChangeText={setGioDen}
-            />
-            <Text style={styles.label}>Số lượng ghế:</Text>
-            <TextInput
-                style={styles.input}
-                value={chotrong}
-                onChangeText={setChoTrong}
-            />
-            <Text style={styles.label}>Nơi Đi:</Text>
-            <TextInput
-                style={styles.input}
-                value={noidi}
-                onChangeText={setNoiDi}
-            />
-            <Text style={styles.label}>Nơi Đến:</Text>
-            <TextInput
-                style={styles.input}
-                value={noiden}
-                onChangeText={setNoiDen}
-            />
-            <Text style={styles.label}>Tài Xế:</Text>
-            <Picker
-                selectedValue={selectedTaiXe}
-                onValueChange={handleTaiXeChange}
-            >
-                {taixe && taixe.map((c) => (
-                    <Picker.Item key={c.id} label={c.Ten_taixe} value={c.id} />
-                ))}
-            </Picker>
-            <Text style={styles.label}>Xe:</Text>
-            <Picker
-                selectedValue={selectedXe}
-                onValueChange={handleXeChange}
-            >
-                {xe && xe.map((item) => (
-                    <Picker.Item key={item.id} label={item.Ten_xe} value={item.id} />
-                ))}
-            </Picker>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={quaylai}>
-                    <Text style={styles.buttonText}>Quay Lại</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={XoaChuyenXe}>
-                    <Text style={styles.buttonText}>Xóa</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaChuyenXe}>
-                    <Text style={styles.buttonText}>Cập nhật</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+        <KeyboardAvoidingView>
+            <ScrollView style={styles.container}>
+                <Text style={styles.label}>Tên chuyến xe:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                />
+                <Text style={styles.label}>Ngày:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={ngay}
+                    onChangeText={setNgay}
+                />
+                <Text style={styles.label}>Giờ Đi:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={gioDi}
+                    onChangeText={setGioDi}
+                />
+                <Text style={styles.label}>Giờ Đến:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={gioDen}
+                    onChangeText={setGioDen}
+                />
+                <Text style={styles.label}>Số lượng ghế:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={chotrong}
+                    onChangeText={setChoTrong}
+                />
+                <Text style={styles.label}>Nơi Đi:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={noidi}
+                    onChangeText={setNoiDi}
+                />
+                <Text style={styles.label}>Nơi Đến:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={noiden}
+                    onChangeText={setNoiDen}
+                />
+                <Text style={styles.label}>Tài Xế:</Text>
+                <Picker
+                    selectedValue={selectedTaiXe}
+                    onValueChange={handleTaiXeChange}
+                    style={{backgroundColor: '#d8d6d0'}}
+                >
+                    {taixe && taixe.map((c) => (
+                        <Picker.Item key={c.id} label={c.Ten_taixe} value={c.id} />
+                    ))}
+                </Picker>
+                <Text style={styles.label}>Xe:</Text>
+                <Picker
+                    selectedValue={selectedXe}
+                    onValueChange={handleXeChange}
+                    style={{backgroundColor: '#d8d6d0'}}
+                >
+                    {xe && xe.map((item) => (
+                        <Picker.Item key={item.id} label={item.Ten_xe} value={item.id} />
+                    ))}
+                </Picker>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={quaylai}>
+                        <Text style={styles.buttonText}>Quay Lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={XoaChuyenXe}>
+                        <Text style={styles.buttonText}>Xóa</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaChuyenXe}>
+                        <Text style={styles.buttonText}>Cập nhật</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     ); 
 }
 
@@ -322,6 +446,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 5,
         fontSize: 16,
+        backgroundColor:'#F2CED5'
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -330,16 +455,19 @@ const styles = StyleSheet.create({
         marginBottom: 35,
     },
     button: {
-        backgroundColor: '#007bff',
-        paddingVertical: 12,
+        width:200,
+        height: 50,
+        backgroundColor: '#BF6B7B',
+        //paddingVertical: 12,
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
-        marginHorizontal: 5,
+        margin: 5,
+        marginTop: 20
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
     },

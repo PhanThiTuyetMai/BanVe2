@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Alert, View, TouchableOpacity, Button, Image} from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, Text, Alert, View, TouchableOpacity, Image, KeyboardAvoidingView} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { TextInput, Button } from 'react-native-paper';
 
 const SuaTaiXe = ({ route }) => {
     const navigation = useNavigation();
@@ -38,8 +39,8 @@ const SuaTaiXe = ({ route }) => {
                     setCMND(c.CMND);
                     setDienThoai(c.DienThoai);
                     setEmail(c.Email);
-                    setAvatar(c.avatar); // Set avatar to current image URI
-                    setOldAvatar(c.avatar); // Set oldAvatar to current image URI
+                    setAvatar(c.avatar); 
+                    setOldAvatar(c.avatar); 
                 }
             )
         } catch (error) {
@@ -96,76 +97,202 @@ const SuaTaiXe = ({ route }) => {
         }
     };
     
+//     return (
+//         <ScrollView style={styles.container}>
+//             <Text style={styles.label}>Tên tài xế:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={name}
+//                 onChangeText={setName}
+//             />
+//             <Text style={styles.label}>Ngày Sinh:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={ngaySinh}
+//                 onChangeText={setNgaySinh}
+//             />
+//             <Text style={styles.label}>Giới Tính:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={gioiTinh}
+//                 onChangeText={setGioiTinh}
+//             />
+//             <Text style={styles.label}>Địa Chỉ:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={diaChi}
+//                 onChangeText={setDiaChi}
+//             />
+//             <Text style={styles.label}>CMND:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={cmnd}
+//                 onChangeText={setCMND}
+//             />
+//             <Text style={styles.label}>Điện Thoại:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={dienThoai}
+//                 onChangeText={setDienThoai}
+//             />
+//             <Text style={styles.label}>Email:</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 value={email}
+//                 onChangeText={setEmail}
+//             />
+//             <View style={{ marginBottom: 30 }}>
+//                 <View style={styles.imagePickerContainer}>
+//                     <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
+//                     <Button title="Chọn ảnh" onPress={pickImage} />
+//                 </View>
+//                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//                     {newAvatar ? (
+//                         <Image source={{ uri: 
+//                         `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${newAvatar.substring(newAvatar.lastIndexOf('/') + 1)}`
+//                          }} style={styles.image} />
+//                     ) : (
+//                             avatar && <Image source={{uri: avatar.endsWith('.jpeg') ? 
+//                             `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar.substring(avatar.lastIndexOf('/') + 1)}` : avatar}} 
+//                             style={styles.image} />
+//                         )}
+//                 </View>
+//             </View>
+//             <View style={styles.buttonContainer}>
+//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={() => gotoDetail(id)}>
+//                     <Text style={styles.buttonText}>Quay Lại</Text>
+//                 </TouchableOpacity>
+//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaTaiXe}>
+//                     <Text style={styles.buttonText}>Cập nhật</Text>
+//                 </TouchableOpacity>
+//             </View>
+//         </ScrollView>
+//     );
+// };
+
+// const styles = StyleSheet.create({
+//     container: {
+//         padding: 20,
+//     },
+//     image: {
+//         width: 200,
+//         height: 200,
+//     },
+//     imagePickerContainer: {
+//         marginBottom: 20,
+//         flexDirection: 'row',
+//         alignItems: 'center',
+//     },
+//     label: {
+//         marginBottom: 5,
+//         fontSize: 16,
+//         fontWeight: 'bold',
+//     },
+//     input: {
+//         marginBottom: 15,
+//         paddingVertical: 10,
+//         paddingHorizontal: 15,
+//         borderWidth: 1,
+//         borderColor: '#ccc',
+//         borderRadius: 5,
+//         fontSize: 16,
+//     },
+//     buttonContainer: {
+//         flexDirection: 'row',
+//         justifyContent: 'space-between',
+//         paddingHorizontal: 20,
+//         marginBottom: 35,
+//     },
+//     button: {
+//         backgroundColor: '#007bff',
+//         paddingVertical: 12,
+//         borderRadius: 5,
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         flex: 1,
+//         marginHorizontal: 5,
+//     },
+//     buttonText: {
+//         color: '#fff',
+//         fontSize: 16,
+//         fontWeight: 'bold',
+//     },
+// });
+
+// export default SuaTaiXe;
+
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.label}>Tên tài xế:</Text>
-            <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-            />
-            <Text style={styles.label}>Ngày Sinh:</Text>
-            <TextInput
-                style={styles.input}
-                value={ngaySinh}
-                onChangeText={setNgaySinh}
-            />
-            <Text style={styles.label}>Giới Tính:</Text>
-            <TextInput
-                style={styles.input}
-                value={gioiTinh}
-                onChangeText={setGioiTinh}
-            />
-            <Text style={styles.label}>Địa Chỉ:</Text>
-            <TextInput
-                style={styles.input}
-                value={diaChi}
-                onChangeText={setDiaChi}
-            />
-            <Text style={styles.label}>CMND:</Text>
-            <TextInput
-                style={styles.input}
-                value={cmnd}
-                onChangeText={setCMND}
-            />
-            <Text style={styles.label}>Điện Thoại:</Text>
-            <TextInput
-                style={styles.input}
-                value={dienThoai}
-                onChangeText={setDienThoai}
-            />
-            <Text style={styles.label}>Email:</Text>
-            <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-            />
-            <View style={{ marginBottom: 30 }}>
-                <View style={styles.imagePickerContainer}>
-                    <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
-                    <Button title="Chọn ảnh" onPress={pickImage} />
+        <KeyboardAvoidingView>
+            <ScrollView style={styles.container}>
+                <Text style={styles.label}>Tên tài xế:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                />
+                <Text style={styles.label}>Ngày Sinh:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={ngaySinh}
+                    onChangeText={setNgaySinh}
+                />
+                <Text style={styles.label}>Giới Tính:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={gioiTinh}
+                    onChangeText={setGioiTinh}
+                />
+                <Text style={styles.label}>Địa Chỉ:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={diaChi}
+                    onChangeText={setDiaChi}
+                />
+                <Text style={styles.label}>CMND:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={cmnd}
+                    onChangeText={setCMND}
+                />
+                <Text style={styles.label}>Điện Thoại:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={dienThoai}
+                    onChangeText={setDienThoai}
+                />
+                <Text style={styles.label}>Email:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                <View style={{ marginBottom: 30 }}>
+                    <View style={styles.imagePickerContainer}>
+                        <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
+                        <Button style={{backgroundColor: "#4f6e4b"}} mode="contained" onPress={pickImage}>CHỌN ẢNH</Button>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        {newAvatar ? (
+                            <Image source={{ uri: 
+                            `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar.substring(avatar.lastIndexOf('/') + 1)}`
+                            }} style={styles.image} />
+                        ) : (
+                                avatar && <Image source={{uri: avatar.endsWith('.jpeg') ? 
+                                `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar.substring(avatar.lastIndexOf('/') + 1)}` : avatar}} 
+                                style={styles.image} />
+                            )}
+                    </View>
                 </View>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    {newAvatar ? (
-                        <Image source={{ uri: 
-                        `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${newAvatar.substring(newAvatar.lastIndexOf('/') + 1)}`
-                         }} style={styles.image} />
-                    ) : (
-                            avatar && <Image source={{uri: avatar.endsWith('.jpeg') ? 
-                            `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar.substring(avatar.lastIndexOf('/') + 1)}` : avatar}} 
-                            style={styles.image} />
-                        )}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={() => gotoDetail(id)}>
+                        <Text style={styles.buttonText}>Quay Lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaTaiXe}>
+                        <Text style={styles.buttonText}>Cập nhật</Text>
+                    </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={() => gotoDetail(id)}>
-                    <Text style={styles.buttonText}>Quay Lại</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaTaiXe}>
-                    <Text style={styles.buttonText}>Cập nhật</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -176,6 +303,8 @@ const styles = StyleSheet.create({
     image: {
         width: 200,
         height: 200,
+        marginTop: 10,
+        borderRadius: 5,
     },
     imagePickerContainer: {
         marginBottom: 20,
@@ -195,6 +324,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 5,
         fontSize: 16,
+        backgroundColor:'#F2CED5'
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -203,7 +333,7 @@ const styles = StyleSheet.create({
         marginBottom: 35,
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#BF6B7B',
         paddingVertical: 12,
         borderRadius: 5,
         alignItems: 'center',
@@ -212,7 +342,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
     },

@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from "react-native"
-import { TextInput, Button } from "react-native-paper"
+import { ScrollView, StyleSheet, Text, View } from "react-native"
+import MyStyles from "../../styles/MyStyles"
+import { Button, TextInput, TouchableRipple } from "react-native-paper";
 import LoginStyle from "./LoginStyle";
 import { useContext, useState } from "react";
 import MyContext from "../../configs/MyContext";
@@ -49,27 +50,15 @@ const Login = () => {
   }
   
   return (
-      <View style={styles.container}>
-          <Text style={styles.title}>Login</Text>
-          <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Tên đăng nhập..." style={LoginStyle.input} right={<TextInput.Icon icon="account"/>}/>
-          <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Mật khẩu..." style={LoginStyle.input} right={<TextInput.Icon icon="eye"/>}/>
-          <Button loading={loading} icon="account" mode="contained" onPress={login}>ĐĂNG NHẬP</Button>
+      <View style={MyStyles.container}>
+          <ScrollView>
+            <Text style={[MyStyles.subject, {marginTop: 80, marginBottom: 50}]}>ĐĂNG NHẬP</Text>
+            <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Tên đăng nhập..." style={LoginStyle.input} right={<TextInput.Icon icon="account"/>}/>
+            <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Mật khẩu..." style={LoginStyle.input} right={<TextInput.Icon icon="eye"/>}/>
+            <Button style={{backgroundColor: "#BF6B7B", marginTop: 60}} loading={loading} icon="account" mode="contained" onPress={login}>ĐĂNG NHẬP</Button>
+          </ScrollView>
       </View>
   )
 }
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-});
   
 export default Login;  

@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native';
 import MyContext from '../../configs/MyContext';
 import API, { endpoints } from '../../configs/API';
 import { ScrollView } from 'react-native';
-import typescript from 'react-native-svg';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { Button, TouchableRipple } from 'react-native-paper';
+import MyStyles from '../../styles/MyStyles';
+
 
 
 const Profile = () => {
     const [user, dispatch] = useContext(MyContext);
+    const [refreshing, setRefreshing] = useState(false);
     const [ve, setVe] = useState([]);
     const [chitiet, setChiTiet] = useState([]);
     const [allTickets, setAllTickets] = useState([]);
@@ -16,7 +20,8 @@ const Profile = () => {
     const [tenchuyen, setTen] = useState([]);
     const [chucvu, setChucVu] = useState([]);
     const [gioDi, setGioDi] = useState([]);
-    const [ticketDetailsVisible, setTicketDetailsVisible] = useState(false);
+    const [ngaydi, setNgayDi] = useState([]);
+    const [hienthiChiTietVe, setHienThiChiTietVe] = useState(false);
     const today = new Date();
     today.setHours(0, 0, 0, 0); 
 
@@ -48,18 +53,22 @@ const Profile = () => {
         try {
             const tenChuyenXeArray = [];
             const gioArray = [];
+            const ngayDi = [];
             for (const ticket of allTickets) {
                 const resChuyen = await API.get(`${endpoints['chuyenxe']}?q=${ticket.Ma_ChuyenXe}`);
                 if (Array.isArray(resChuyen.data.results)) {
                     const filteredResults = resChuyen.data.results.filter(result => !("_h" in result && "_i" in result && "_j" in result && "_k" in result));
                     const tenChuyenXe = filteredResults.map(c => c.TenChuyenXe);
                     const giodi = filteredResults.map(c => c.Giodi);
+                    const ngayd = filteredResults.map(c => c.Ngay);
                     tenChuyenXeArray.push(...tenChuyenXe);
                     gioArray.push(...giodi);
+                    ngayDi.push(...ngayd);
                 }
             }
             setTen(tenChuyenXeArray);
             setGioDi(gioArray);
+            setNgayDi(ngayDi)
         } catch (error) {
             console.error(error);
         }
@@ -128,18 +137,22 @@ const Profile = () => {
         return ngayFormatted + '/' + thangFormatted + '/' + nam;
     }
 
-    const toggleTicketDetailsVisibility = () => {
-        setTicketDetailsVisible(!ticketDetailsVisible);
+    const hienthiVe = () => {
+        setHienThiChiTietVe(!hienthiChiTietVe);
     };
 
-    const refreshData = () => {
-        loadVe();
-        loadChuyen(allTickets);
-        loadGhe(chitiet, allTickets);
-        Chucvu();
+    const onRefresh = () => {
+        setRefreshing(true);
+        setTimeout(() => {
+            loadVe();
+            loadChuyen(allTickets);
+            loadGhe(chitiet, allTickets);
+            Chucvu();
+            setRefreshing(false);
+        }, 2000);
     };
 
-    const renderTicketDetails = () => {
+    const ChiTietVe = () => {
         return (
             <ScrollView>
                 {uniqueTickets.length === 0 ? (
@@ -153,7 +166,8 @@ const Profile = () => {
                             <Text>Chuyến Xe: {tenchuyen[index]}</Text>
                             <Text>Ghế ngồi: {uniqueGhe[index]}</Text>
                             <Text>Giờ đi: {gioDi[index]}</Text>
-                            {new Date(ticket.updated_date) >= today ? (
+                            <Text>Ngày đi: {chuyenDoiNgay(ngaydi[index])}</Text>
+                            {new Date(ngaydi[index]) >= today ? (
                                 <Text style={{color: 'blue', marginLeft: 220}}>Chưa hoàn thành</Text>
                             ) : (
                                 <Text style={{color: 'blue', marginLeft: 220}}>Đã hoàn thành</Text>
@@ -167,9 +181,11 @@ const Profile = () => {
 
     return (
         <>
-            <ScrollView>
+            <ScrollView  refreshControl={<RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh} />}>
             <View>
-                <Text style={{fontSize: 20, marginLeft: 100, marginTop: 15, marginBottom: 15, fontWeight: 'bold'}}>THÔNG TIN TÀI KHOẢN</Text>
+                <Text style={MyStyles.subject}>THÔNG TIN TÀI KHOẢN</Text>
                 <View>
                     <Image
                         source={{
@@ -180,8 +196,8 @@ const Profile = () => {
                         style={styles.image} 
                         resizeMethod='auto'
                     />
-                    <View style={{marginLeft: 50}}>
-                        <Text style={{fontSize: 25}}>Tên : {user.username}</Text>
+                    <View style={styles.border}>
+                        <Text style={{fontSize: 25}}>Tên : {[user.first_name, user.last_name].join(' ')}</Text>
                         <Text style={{fontSize: 25}}>Email: {user.email}</Text>
                         {chucvu && chucvu.map(
                             c => (
@@ -191,25 +207,23 @@ const Profile = () => {
                     </View>
                 </View>
             </View>
-            <Text style={styles.detailsLinkRes} onPress={refreshData}>Làm mới đơn hàng</Text>
-            <Text></Text>
-            <Text>Lưu ý nếu không thấy vé đã đặt vui lòng nhấn làm mới đơn hàng</Text>
-            <Text style={styles.detailsLink} onPress={toggleTicketDetailsVisibility}>Xem chi tiết đơn hàng</Text>
-                {ticketDetailsVisible && renderTicketDetails()}
+            <TouchableRipple>
+                <Text style={styles.detailsLink} onPress={hienthiVe}>Xem chi tiết đơn hàng</Text>
+            </TouchableRipple>
+                {hienthiChiTietVe && ChiTietVe()}
             </ScrollView>
         </>
     );
 };
     
     const styles = StyleSheet.create({
-        container: {
+        ontainer: {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
         },
         text: {
-            fontSize: 20,
-            fontWeight: 'bold',
+            fontSize: 18,
         },
         itemContainer: {
             borderWidth: 1, 
@@ -228,21 +242,30 @@ const Profile = () => {
         image: {
             width: 200,
             height: 200,
+            marginTop: 25,
             marginBottom: 25, 
-            marginLeft: 98
+            marginLeft: 98,
+            borderRadius: 100,
         },
         detailsLink: {
             color: 'blue',
             textDecorationLine: 'underline',
             marginTop: 10,
             marginLeft: 260,
+            marginBottom: 10
         },
-        detailsLinkRes: {
-            color: 'red',
-            textDecorationLine: 'underline',
-            marginTop: 15,
-            marginLeft: 15,
-        },
+        border: {
+            justifyContent: 'center',
+            backgroundColor:'#F2B6C1',
+            borderColor: 'black',
+            borderWidth: 2,
+            borderRadius: 20,
+            padding: 20,
+            marginTop: 10,
+            marginLeft:30,
+            marginRight: 40,
+            marginBottom: 30,
+        }
     });
     
 export default Profile;

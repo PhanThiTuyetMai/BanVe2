@@ -135,16 +135,16 @@ const SuaTuyenXe = ({route}) => {
                 value={tuyenXe[t.name]}
                 onChangeText={c => updateState(t.name, c)} 
                 key={t.label} 
-                style={MyStyles.margin}
+                style={[MyStyles.margin, {backgroundColor: '#F2CED5'}]}
                 label={t.label}
                 right={<TextInput.Icon icon={t.icon} />} />)}
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaTuyenXe}>
-                    <Text>SAVE</Text>
+                    <Text style={styles.buttonText}>SAVE</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={xoaTuyenXe}>
-                    <Text>DELETE</Text>
+                    <Text style={styles.buttonText}>DELETE</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         marginBottom: 35,
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#BF6B7B',
         paddingVertical: 12,
         borderRadius: 5,
         alignItems: 'center',
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
     },
