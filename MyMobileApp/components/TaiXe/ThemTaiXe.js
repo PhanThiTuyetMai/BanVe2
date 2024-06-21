@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { BASE_URL, endpoints } from '../../configs/API';
 import { Button, TextInput } from 'react-native-paper';
 import MyStyles from '../../styles/MyStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThemTX = ({navigation}) => {
     const [name, setName] = useState('');
@@ -38,21 +39,22 @@ const ThemTX = ({navigation}) => {
             Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin và chọn ảnh đại diện');
             return;
           }
-      
+          const token = await AsyncStorage.getItem('access_token');
           const response = await fetch(BASE_URL + endpoints['them_TX'], {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
-              Ten_taixe: name,
-              NgaySinh: ngaySinh,
-              GioiTinh: gioiTinh,
-              DiaChi: diaChi,
-              CMND: cmnd,
-              DienThoai: dienThoai,
-              Email: email,
-              avatar: avatar, 
+                Ten_taixe: name,
+                NgaySinh: ngaySinh,
+                GioiTinh: gioiTinh,
+                DiaChi: diaChi,
+                CMND: cmnd,
+                DienThoai: dienThoai,
+                Email: email,
+                avatar: avatar, 
             }),
           });
       
@@ -61,7 +63,17 @@ const ThemTX = ({navigation}) => {
           }
       
           // Nếu thành công, hiển thị thông báo và xóa các trường nhập
-          Alert.alert('Thông Báo', 'Thêm tài xế thành công!');
+          Alert.alert(
+            'Thêm thành công',
+            'Bạn vui lòng quay lại trang Tài Xế để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+            [
+                {
+                    text: 'OK',
+                    onPress: () => navigation.navigate('Tài Xế - Danh Sách')
+                },
+            ],
+            { cancelable: false }
+        )
           setName('');
           setNgaySinh('');
           setGioiTinh('');

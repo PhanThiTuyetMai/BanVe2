@@ -5,7 +5,7 @@ import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { Button, TextInput } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const SuaKhachHang = ({ route }) => {
@@ -30,24 +30,31 @@ const SuaKhachHang = ({ route }) => {
 
     const KhachHangData = async () => {
         try {
-            const response = await API.get(`${endpoints['khachhang']}?makhach=${khachhangID}`);
-            const data = response.data.results;
-            data && data.map(
-                c => {
-                    setID(c.id);
-                    setName(c.Ten_KH);
-                    setNgaySinh(c.NgaySinh);
-                    setGioiTinh(c.GioiTinh);
-                    setDiaChi(c.DiaChi);
-                    setCMND(c.CMND);
-                    setLoaiKH(c.Loai_KH);
-                    setDienThoai(c.DienThoai);
-                    setEmail(c.Email);
-                    setAvatar(c.avatar); // Set avatar to current image URI
-                    setOldAvatar(c.avatar); // Set oldAvatar to current image URI
-                }
-            )
+            const token = await AsyncStorage.getItem('access_token');
+            if(token){
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+                const response = await API.get(`${endpoints['khachhang']}?makhach=${khachhangID}`, {headers});
+                const data = response.data.results;
+                data && data.map(
+                    c => {
+                        setID(c.id);
+                        setName(c.Ten_KH);
+                        setNgaySinh(c.NgaySinh);
+                        setGioiTinh(c.GioiTinh);
+                        setDiaChi(c.DiaChi);
+                        setCMND(c.CMND);
+                        setLoaiKH(c.Loai_KH);
+                        setDienThoai(c.DienThoai);
+                        setEmail(c.Email);
+                        setAvatar(c.avatar); // Set avatar to current image URI
+                        setOldAvatar(c.avatar); // Set oldAvatar to current image URI
+                    }
+                )
+            }
         } catch (error) {
+            Alert.alert('Lưu Ý', 'Lỗi khi lấy thông tin khách hàng !')
             console.error('Lỗi khi lấy thông tin khách hàng:', error);
         }
     };
@@ -73,6 +80,14 @@ const SuaKhachHang = ({ route }) => {
 
     const suaKhachHang = async () => {
         try {
+            const token = await AsyncStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('Khong Tim Thay Access token');
+            }
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            };
             await API.put(`${endpoints['khachhang']}${khachhangID}/Sua_KH/`, {
                 Ten_KH: name,
                 NgaySinh: ngaySinh,
@@ -83,7 +98,7 @@ const SuaKhachHang = ({ route }) => {
                 Email: email,
                 avatar: newAvatar || oldAvatar,
                 Loai_KH: loai_Kh,
-            });
+            }, {headers});
             await KhachHangData();
             console.log('Thông tin khách hàng đã được cập nhật');
             Alert.alert(
@@ -98,6 +113,7 @@ const SuaKhachHang = ({ route }) => {
                 { cancelable: false }
             )
         } catch (error) {
+            Alert.alert('Lưu Ý', 'Lỗi khi cập nhật thông tin khách hàng !');
             console.error('Lỗi khi cập nhật thông tin khách hàng:', error);
         }
     };

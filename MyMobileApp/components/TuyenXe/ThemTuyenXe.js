@@ -4,6 +4,7 @@ import { Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpa
 import { TextInput } from "react-native-paper";
 import API, { BASE_URL, endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ThemTuyenXe = () => {
     const nav = useNavigation();
@@ -36,16 +37,15 @@ const ThemTuyenXe = () => {
 
     const addTuyenXe = async() => {
         try {
-            
-
             let form = new FormData();
             for(key in tuyenXe)
                 form.append(key, tuyenXe[key]);
             console.info(form);
-
+            const token = await AsyncStorage.getItem('access_token');
             let response = await API.post(endpoints['them_tuyenXe'],form, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
 

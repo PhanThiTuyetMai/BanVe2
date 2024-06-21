@@ -4,6 +4,7 @@ import API, { BASE_URL, endpoints } from '../../configs/API';
 import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
 import { TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ThemCX({navigation, route}) {
     const { TuyenXeID } = route.params;
@@ -65,34 +66,46 @@ export default function ThemCX({navigation, route}) {
 
     const themChuyen = async () => {
         try {
-        if (!name || !ngay || !giodi || !gioden || !chotrong || !noidi || !noiden || !mataixe || !maxe) {
-            Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin');
-            return;
-        }
-        const formattedNgay = moment(ngay, 'DD/MM/YYYY').format('YYYY-MM-DD');
-        const response = await fetch(BASE_URL + endpoints['them_chuyenXe'], {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-            TenChuyenXe: name,
-            Ngay: formattedNgay,
-            Ma_Tuyen: parseInt(TuyenXeID),
-            Giodi: giodi,
-            Gioden: gioden,
-            Cho_trong: chotrong,
-            Noidi: noidi,
-            Noiden: noiden,
-            Ma_TaiXe: parseInt(mataixe),
-            Ma_Xe: parseInt(maxe),
-            }),
-        });
+            if (!name || !ngay || !giodi || !gioden || !chotrong || !noidi || !noiden || !mataixe || !maxe) {
+                Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin');
+                return;
+            }
+            const formattedNgay = moment(ngay, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            const token = await AsyncStorage.getItem('access_token');
+            const response = await fetch(BASE_URL + endpoints['them_chuyenXe'], {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                TenChuyenXe: name,
+                Ngay: formattedNgay,
+                Ma_Tuyen: parseInt(TuyenXeID),
+                Giodi: giodi,
+                Gioden: gioden,
+                Cho_trong: chotrong,
+                Noidi: noidi,
+                Noiden: noiden,
+                Ma_TaiXe: parseInt(mataixe),
+                Ma_Xe: parseInt(maxe),
+                }),
+            });
 
-        if (!response.ok) {
-            throw new Error('Đã xảy ra lỗi khi thêm chuyến xe');
-        }
-            Alert.alert('Thông Báo', 'Thêm chuyến xe thành công!.');
+            if (!response.ok) {
+                throw new Error('Đã xảy ra lỗi khi thêm chuyến xe');
+            }
+            Alert.alert(
+                'Thêm thành công',
+                'Bạn vui lòng quay lại trang Chuyến Xe để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Chuyến Xe', {TuyenXeID})
+                    },
+                ],
+                { cancelable: false }
+            )
             setName('');
             setNgay('');
             setGioDi('');
@@ -104,8 +117,8 @@ export default function ThemCX({navigation, route}) {
             setMaXe('');
             quayLai(TuyenXeID);
         } catch (error) {
-        console.error('Lỗi:', error.message);
-        Alert.alert('Lưu Ý', 'Đã xảy ra lỗi khi thêm chuyến xe');
+            console.error('Lỗi:', error.message);
+            Alert.alert('Lưu Ý', 'Đã xảy ra lỗi khi thêm chuyến xe');
         }
     };
 

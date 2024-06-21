@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Image, View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { Image, View, StyleSheet, Text, TouchableOpacity, Alert, KeyboardAvoidingView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BASE_URL, endpoints } from '../../configs/API';
 import { Button, TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThemNV = ({navigation}) => {
       const [name, setName] = useState('');
@@ -25,7 +26,7 @@ const ThemNV = ({navigation}) => {
 
           if (!result.canceled) {
             const uri = result.assets[0].uri;
-            const fileNameWithExtension = uri.substring(uri.lastIndexOf('/') + 1); // Lấy phần cuối của URI (tên tệp kèm phần mở rộng)
+            const fileNameWithExtension = uri.substring(uri.lastIndexOf('/') + 1); 
             setAvatar(fileNameWithExtension);
           }
       
@@ -38,11 +39,12 @@ const ThemNV = ({navigation}) => {
               Alert.alert('Lưu Ý', 'Vui lòng nhập đầy đủ thông tin và chọn ảnh đại diện');
               return;
             }
-        
+            const token = await AsyncStorage.getItem('access_token');
             const response = await fetch(BASE_URL + endpoints['them_NV'], {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
               },
               body: JSON.stringify({
                 Ten_NV: name,
@@ -61,7 +63,17 @@ const ThemNV = ({navigation}) => {
             }
         
             // Nếu thành công, hiển thị thông báo và xóa các trường nhập
-            Alert.alert('Thông Báo','Thêm nhân viên thành công!');
+            Alert.alert(
+                'Thêm thành công',
+                'Bạn vui lòng quay lại trang Nhân Viên để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Nhân Viên - Danh Sách')
+                    },
+                ],
+                { cancelable: false }
+            )
             setName('');
             setNgaySinh('');
             setGioiTinh('');
@@ -80,69 +92,69 @@ const ThemNV = ({navigation}) => {
         navigation.navigate('Nhân Viên - Danh Sách');
       }
 
-    return (
-      <KeyboardAvoidingView>
-          <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={{marginTop: 15}}>
-                <TextInput
-                    style={styles.input}
-                    label="Họ và nhân viên"
-                    value={name}
-                    onChangeText={text => setName(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Ngày sinh"
-                    value={ngaySinh}
-                    onChangeText={text => setNgaySinh(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Giới tính"
-                    value={gioiTinh}
-                    onChangeText={text => setGioiTinh(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Địa chỉ"
-                    value={diaChi}
-                    onChangeText={text => setDiaChi(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="CMND"
-                    value={cmnd}
-                    onChangeText={text => setCMND(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Điện thoại"
-                    value={dienThoai}
-                    onChangeText={text => setDienThoai(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Email"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                />
-                <View style={{marginBottom: 30}}>
-                    <View style={styles.imagePickerContainer}>
-                      <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
-                      <Button style={{backgroundColor: "#4f6e4b"}} mode="contained" onPress={pickImage}>CHỌN ẢNH</Button>
-                    </View>
-                    {avatar && <Image source={{ uri: `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar}`}} style={styles.image} />}
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.button, { width: 'auto'}]} onPress={quayLai}>
-                        <Text style={styles.buttonText}>Quay Lại</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={addEmployee}>
-                        <Text style={styles.buttonText}>Thêm nhân viên</Text>
-                    </TouchableOpacity>
-                </View>
-          </ScrollView>
-      </KeyboardAvoidingView>
-    );
+      return (
+        <KeyboardAvoidingView>
+            <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={{marginTop: 15}}>
+                  <TextInput
+                      style={styles.input}
+                      label="Họ và nhân viên"
+                      value={name}
+                      onChangeText={text => setName(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="Ngày sinh"
+                      value={ngaySinh}
+                      onChangeText={text => setNgaySinh(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="Giới tính"
+                      value={gioiTinh}
+                      onChangeText={text => setGioiTinh(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="Địa chỉ"
+                      value={diaChi}
+                      onChangeText={text => setDiaChi(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="CMND"
+                      value={cmnd}
+                      onChangeText={text => setCMND(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="Điện thoại"
+                      value={dienThoai}
+                      onChangeText={text => setDienThoai(text)}
+                  />
+                  <TextInput
+                      style={styles.input}
+                      label="Email"
+                      value={email}
+                      onChangeText={text => setEmail(text)}
+                  />
+                  <View style={{marginBottom: 30}}>
+                      <View style={styles.imagePickerContainer}>
+                        <Text style={{ marginRight: 10 }}>Chọn ảnh đại diện:</Text>
+                        <Button style={{backgroundColor: "#4f6e4b"}} mode="contained" onPress={pickImage}>CHỌN ẢNH</Button>
+                      </View>
+                      {avatar && <Image source={{ uri: `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${avatar}`}} style={styles.image} />}
+                  </View>
+                  <View style={styles.buttonContainer}>
+                      <TouchableOpacity style={[styles.button, { width: 'auto'}]} onPress={quayLai}>
+                          <Text style={styles.buttonText}>Quay Lại</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={[styles.button, { width: 'auto' }]} onPress={addEmployee}>
+                          <Text style={styles.buttonText}>Thêm nhân viên</Text>
+                      </TouchableOpacity>
+                  </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
+      );
 };
 
 const styles = StyleSheet.create({

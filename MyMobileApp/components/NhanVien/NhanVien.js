@@ -6,6 +6,7 @@ import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
 import "moment/locale/vi"
 import MyContext from "../../configs/MyContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NhanVien = () => {
     const navigation = useNavigation();
@@ -22,12 +23,20 @@ const NhanVien = () => {
             try {
                 setLoading(true);
                 let url;
+
                 if (!isNaN(q)) {
                     url = `${endpoints['nhanvien']}?ma_nhanvien=${q}&page=${page}`;
                 } else {
                     url = `${endpoints['nhanvien']}?q=${q}&page=${page}`;
                 }
-                let res = await API.get(url);
+
+                const token = await AsyncStorage.getItem('access_token');
+
+                let headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+                
+                let res = await API.get(url, {headers});
                 if (page === 1) {
                     setNhanVien(res.data.results);
                 } else if(page !== 0) {

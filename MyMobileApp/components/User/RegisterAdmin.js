@@ -90,7 +90,6 @@ const RegisterAdmin = () => {
             setErr(true);
         else{
             setErr(false);
-
             //gửi dữ liệu lên API bằng form
              let form = new FormData();
             //duyệt qua các trường bỏ confirm ra, key là duyệt qua các từ khóa đang liên kết vào value
@@ -100,12 +99,11 @@ const RegisterAdmin = () => {
                          form.append(key, {
                              uri: user.avatar.uri,
                              name: user.avatar.fileName,
-                             type: user.avatar.mimeType
+                             type: 'image/jpg',
                          });
                     }else
                          form.append(key, user[key]);
              console.info(form);
-            
              setLoading(true);
             try{
                 //gọi api
@@ -114,7 +112,6 @@ const RegisterAdmin = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
             
                 if (res.status === 201) {
                     Alert.alert(
@@ -145,7 +142,6 @@ const RegisterAdmin = () => {
                         expanded={expanded}
                         onPress={handlePress}
                     >
-                        <List.Item title="Admin" onPress={() => handleSelect(1, "Admin")}/>
                         <List.Item title="Tài xế" onPress={() => handleSelect(4, "Tài xế")} />
                         <List.Item title="Nhân viên" onPress={() => handleSelect(2, "Nhân viên")}/>
                     </List.Accordion>

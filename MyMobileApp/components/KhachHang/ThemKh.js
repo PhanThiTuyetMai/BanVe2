@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { BASE_URL, endpoints } from '../../configs/API';
 import { Picker } from '@react-native-picker/picker';
 import { Button, TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThemKH = ({navigation}) => {
   const [name, setName] = useState('');
@@ -46,11 +47,12 @@ const ThemKH = ({navigation}) => {
           } else if (loai_Kh === 'Online') {
             loaiKhachHangId = '2';
           }
-      
+          const token = await AsyncStorage.getItem('access_token');
           const response = await fetch(BASE_URL + endpoints['them_KH'], {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
               Ten_KH: name,
@@ -70,7 +72,17 @@ const ThemKH = ({navigation}) => {
           }
       
           // Nếu thành công, hiển thị thông báo và xóa các trường nhập
-          Alert.alert('Thông Báo', 'Thêm Khách Hàng Thành Công !!!')
+          Alert.alert(
+              'Thêm thành công',
+              'Bạn vui lòng quay lại trang Khách Hàng để xem sự thay đổi. Nếu bạn không thấy sự thay đổi vui lòng thoát và tải lại',
+              [
+                  {
+                      text: 'OK',
+                      onPress: () => navigation.navigate('Khách Hàng - Danh Sách')
+                  },
+              ],
+              { cancelable: false }
+          )
           setName('');
           setNgaySinh('');
           setGioiTinh('');

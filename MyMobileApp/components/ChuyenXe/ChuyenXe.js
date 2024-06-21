@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View, ActivityIndicator, Image, ScrollView, Text, StyleSheet, TouchableOpacity, RefreshControl, Platform } from "react-native"
 import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
@@ -10,10 +10,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLocationDot, faEllipsis, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
+import MyContext from "../../configs/MyContext";
 
 
 const ChuyenXe = ({ route }) => {
     const { TuyenXeID } = route.params;
+    const [user, dispatch] = useContext(MyContext);
     const navigation = useNavigation();
     const [page, setPage] = useState(1);
     const [chuyenxe, setChuyenXe] = useState([]);
@@ -186,7 +188,7 @@ const ChuyenXe = ({ route }) => {
     }, [searchResultFound]);
     
     const formDate = (date) => {
-        return moment(date, 'YYYY/MM/DD').format('DD/MM/YYYY');
+        return moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY');
     }
 
     const tinhGia = (ngay, gia) => {
@@ -298,11 +300,6 @@ const ChuyenXe = ({ route }) => {
                 refreshing={refreshing}
                 onRefresh={onRefresh}/>}>
                 {loading && <ActivityIndicator/>}
-                {searchResultFound && locchuyenxe && locchuyenxe.map(
-                    c => (
-                        <Text key={c.id} style={{textAlign: 'center', fontSize: 16, marginTop: 10, marginBottom: 10}}>Kết quả tìm kiếm cho ngày {formDate(c.Ngay)}</Text>
-                    )
-                )}
                 {tuyenxe && tuyenxe.map(
                     d => (
                         locchuyenxe.length > 0 ? locchuyenxe.map(
@@ -417,9 +414,11 @@ const ChuyenXe = ({ route }) => {
                     <TouchableOpacity style={[styles.button, { width: 100 }]} onPress={goToTuyenXe}>
                         <Text style={styles.buttonText}>Quay lại</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button]} onPress={() => {gotoThemChuyen(parseInt(TuyenXeID))}}>
-                        <Text style={styles.buttonText}>Thêm chuyến xe</Text>
-                    </TouchableOpacity>
+                    {user && user.Loai_NguoiDung === "1" && (
+                        <TouchableOpacity style={[styles.button]} onPress={() => {gotoThemChuyen(parseInt(TuyenXeID))}}>
+                            <Text style={styles.buttonText}>Thêm chuyến xe</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 {loading && <ActivityIndicator/>}
             </ScrollView>

@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet, Image, ScrollView, Touchable
 import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import MyStyles from '../../styles/MyStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const TaiXeDetail = ({ route }) => {
@@ -26,7 +27,6 @@ const TaiXeDetail = ({ route }) => {
   }, [TaiXeID]);
 
   const XoaTaiXe = async () => {
-    // Hiển thị cảnh báo xác nhận
     Alert.alert(
         'Xác nhận xóa',
         'Bạn có chắc chắn muốn xóa tài xế này?',
@@ -39,7 +39,13 @@ const TaiXeDetail = ({ route }) => {
                 text: 'Xóa',
                 onPress: async () => {
                     try {
-                        const res = await API.delete(`${endpoints['taixe']}${TaiXeID}/Xoa_TX/`);
+                        const token = await AsyncStorage.getItem('access_token');
+
+                        let headers = {
+                            'Authorization': `Bearer ${token}`
+                        }
+
+                        const res = await API.delete(`${endpoints['taixe']}${TaiXeID}/Xoa_TX/`, {headers});
                         if (res.status === 204) {
                             console.log('Tài xế được xóa thành công');
                             Alert.alert(

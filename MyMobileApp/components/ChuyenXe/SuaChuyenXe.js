@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Alert, View, TouchableOpacity, Button, Image, KeyboardAvoidingView} from 'react-native';
+import { StyleSheet, Text, Alert, View, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
 import { TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SuaChuyenXe = ({ route }) => {
 
@@ -144,10 +145,14 @@ const SuaChuyenXe = ({ route }) => {
     const suaChuyenXe = async () => {
         try {
 
-            const formattedNgay = moment(ngay).format('YYYY-MM-DD');
+            const formattedNgay = moment(ngay, 'DD/MM/YYYY').format('YYYY-MM-DD');
             const maTaiXe = selectedTaiXe || mataixe;
             const maXe = selectedXe || maxe;
-
+            const token = await AsyncStorage.getItem('access_token');
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            };
             await API.put(`${endpoints['chuyenxe']}${ChuyenXeID}/Capnhat_ChuyenXe/`, {
                 TenChuyenXe: name,
                 Ngay: formattedNgay,
@@ -159,7 +164,7 @@ const SuaChuyenXe = ({ route }) => {
                 Noiden: noiden,
                 Ma_TaiXe: parseInt(maTaiXe),
                 Ma_Xe: parseInt(maXe),
-            });
+            }, {headers});
             console.log('Thông tin chuyến xe đã được cập nhật');
             Alert.alert(
                 'Cập nhật thành công',
@@ -191,7 +196,11 @@ const SuaChuyenXe = ({ route }) => {
                         text: 'Xóa',
                         onPress: async () => {
                             try {
-                                const res = await API.delete(`${endpoints['chuyenxe']}${ChuyenXeID}/Xoa_ChuyenXe/`);
+                                const token = await AsyncStorage.getItem('access_token');
+                                let headers = {
+                                    'Authorization': `Bearer ${token}`
+                                };
+                                const res = await API.delete(`${endpoints['chuyenxe']}${ChuyenXeID}/Xoa_ChuyenXe/`, {headers});
                                 if (res.status === 204) {
                                     console.log('Chuyến xe được xóa thành công');
                                     Alert.alert(
@@ -228,125 +237,6 @@ const SuaChuyenXe = ({ route }) => {
             console.error('Error:', error);
         }
     };
-
-//     return (
-//         <ScrollView style={styles.container}>
-//             <Text style={styles.label}>Tên chuyến xe:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={name}
-//                 onChangeText={setName}
-//             />
-//             <Text style={styles.label}>Ngày:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={ngay}
-//                 onChangeText={setNgay}
-//             />
-//             <Text style={styles.label}>Giờ Đi:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={gioDi}
-//                 onChangeText={setGioDi}
-//             />
-//             <Text style={styles.label}>Giờ Đến:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={gioDen}
-//                 onChangeText={setGioDen}
-//             />
-//             <Text style={styles.label}>Số lượng ghế:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={chotrong}
-//                 onChangeText={setChoTrong}
-//             />
-//             <Text style={styles.label}>Nơi Đi:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={noidi}
-//                 onChangeText={setNoiDi}
-//             />
-//             <Text style={styles.label}>Nơi Đến:</Text>
-//             <TextInput
-//                 style={styles.input}
-//                 value={noiden}
-//                 onChangeText={setNoiDen}
-//             />
-//             <Text style={styles.label}>Tài Xế:</Text>
-//             <Picker
-//                 selectedValue={selectedTaiXe}
-//                 onValueChange={handleTaiXeChange}
-//             >
-//                 {taixe && taixe.map((c) => (
-//                     <Picker.Item key={c.id} label={c.Ten_taixe} value={c.id} />
-//                 ))}
-//             </Picker>
-//             <Text style={styles.label}>Xe:</Text>
-//             <Picker
-//                 selectedValue={selectedXe}
-//                 onValueChange={handleXeChange}
-//             >
-//                 {xe && xe.map((item) => (
-//                     <Picker.Item key={item.id} label={item.Ten_xe} value={item.id} />
-//                 ))}
-//             </Picker>
-//             <View style={styles.buttonContainer}>
-//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={quaylai}>
-//                     <Text style={styles.buttonText}>Quay Lại</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={XoaChuyenXe}>
-//                     <Text style={styles.buttonText}>Xóa</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaChuyenXe}>
-//                     <Text style={styles.buttonText}>Cập nhật</Text>
-//                 </TouchableOpacity>
-//             </View>
-//         </ScrollView>
-//     ); 
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         padding: 20,
-//     },
-//     label: {
-//         marginBottom: 5,
-//         fontSize: 16,
-//         fontWeight: 'bold',
-//     },
-//     input: {
-//         marginBottom: 15,
-//         paddingVertical: 10,
-//         paddingHorizontal: 15,
-//         borderWidth: 1,
-//         borderColor: '#ccc',
-//         borderRadius: 5,
-//         fontSize: 16,
-//     },
-//     buttonContainer: {
-//         flexDirection: 'row',
-//         justifyContent: 'space-between',
-//         paddingHorizontal: 20,
-//         marginBottom: 35,
-//     },
-//     button: {
-//         backgroundColor: '#007bff',
-//         paddingVertical: 12,
-//         borderRadius: 5,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         flex: 1,
-//         marginHorizontal: 5,
-//     },
-//     buttonText: {
-//         color: '#fff',
-//         fontSize: 16,
-//         fontWeight: 'bold',
-//     },
-// });
-
-// export default SuaChuyenXe;
 
     return (
         <KeyboardAvoidingView>

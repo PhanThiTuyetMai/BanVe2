@@ -82,11 +82,11 @@ const Register = () => {
             //duyệt qua các trường bỏ confirm ra, key là duyệt qua các từ khóa đang liên kết vào value
             for(let key in user)
                 if(key !== 'confirm_password')
-                     if(key === 'avatar') {
+                    if(key === 'avatar') {
                         form.append(key, {
                             uri: user.avatar.uri,
                             name: user.avatar.fileName,
-                            type: user.avatar.mimeType
+                            type: 'image/jpg',
                         });
                     }else
                          form.append(key, user[key]);

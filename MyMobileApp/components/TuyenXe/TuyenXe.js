@@ -85,7 +85,7 @@ const TuyenXe = () => {
     }
 
     const gotoSuaTuyenXe = (TuyenXeID) => {
-        navigation.navigate('Chỉnh sửa tuyến xe', {TuyenXeID});
+        navigation.navigate('Chỉnh sửa tuyến xe', {TuyenXeID} );
     }
 
     return (
@@ -114,11 +114,11 @@ const TuyenXe = () => {
                                                         <Text>Tìm kiếm</Text>
                                                 </TouchableOpacity>
                                                 {user.Loai_NguoiDung === "1" && (
-                                                    <TouchableOpacity style={[styles.button, { marginLeft: 15 }]} onPress={gotoSuaTuyenXe}>
+                                                    <TouchableOpacity style={[styles.button, { marginLeft: 15 }]} onPress={() => gotoSuaTuyenXe(parseInt(c.id))}>
                                                         <Text>Sửa</Text>
                                                     </TouchableOpacity>
                                                 )}
-                                            </View>
+                                        </View>
                                     )}
                                 />
                             </View>
@@ -126,9 +126,11 @@ const TuyenXe = () => {
                     ))
                 }
                 {loading && page > 1 && <ActivityIndicator/>}
-                <TouchableOpacity style={[styles.button]} onPress={() => {navigation.navigate('Thêm Tuyến Xe')}}>
+                {user.Loai_NguoiDung === "1" && (
+                    <TouchableOpacity style={[styles.button]} onPress={() => {navigation.navigate('Thêm Tuyến Xe')}}>
                         <Text>Thêm Tuyến Xe</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                )}
             </ScrollView>
         </View>
     )

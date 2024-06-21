@@ -6,6 +6,7 @@ import API, { endpoints } from "../../configs/API";
 import MyStyles from "../../styles/MyStyles"
 import "moment/locale/vi"
 import MyContext from "../../configs/MyContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const KhachHang = () => {
     const navigation = useNavigation();
@@ -27,7 +28,13 @@ const KhachHang = () => {
                 } else {
                     url = `${endpoints['khachhang']}?q=${q}&page=${page}`;
                 }
-                let res = await API.get(url);
+                const token = await AsyncStorage.getItem('access_token');
+
+                let headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+
+                let res = await API.get(url, {headers});
                 if (page === 1) {
                     setKhachHang(res.data.results);
                 } else if(page !== 0) {
@@ -86,69 +93,6 @@ const KhachHang = () => {
         setPage(1);
         callback(value)
     }
-
-//     return (
-//         <View style={MyStyles.container}>
-//             <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 , marginTop: -40}}>Danh sách khách hàng</Text>
-//             <View>
-//                 <Searchbar placeholder="Nhập id hoặc tên của khách hàng..." onChangeText={(t) => search(t, setQ)} value={q} />
-//             </View>
-//             <ScrollView refreshControl={<RefreshControl
-//             refreshing={refreshing}
-//             onRefresh={onRefresh}/>} onScroll={loadMore}>
-//                 {loading && <ActivityIndicator/>}
-//                 { khachhang && khachhang.map(
-//                     c => (
-//                         <TouchableOpacity onPress={() => gotoDetail(c.id)} key={c.id}>
-//                             <View key={c.id} >
-//                                 <List.Item style={styles.margin} 
-//                                     title={c.Ten_KH} 
-//                                     description={c.Email}
-//                                     left={() => (
-//                                         <Image 
-//                                             style={MyStyles.avatar} 
-//                                             source={{
-//                                                 uri: c.avatar && c.avatar.endsWith('.jpeg') 
-//                                                     ? `file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FMyMobileApp-caeae716-14f8-42e8-8345-b048446019bf/ImagePicker/${c.avatar.substring(c.avatar.lastIndexOf('/') + 1)}`
-//                                                     : c.avatar
-//                                             }} 
-//                                         />
-//                                     )}
-//                                 />
-//                             </View>
-//                         </TouchableOpacity>    
-//                     ))
-//                 }
-//                 <View style={styles.buttonContainer}>
-//                       <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={goToHome}>
-//                         <Text>Quay lại</Text>
-//                       </TouchableOpacity>
-//                       <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={gotoAdd}>
-//                         <Text style={styles.buttonText}>Thêm</Text>
-//                       </TouchableOpacity>
-//                 </View>
-//                 {loading && page > 1 && <ActivityIndicator/>}
-//             </ScrollView>
-//         </View>
-//     )
-// }
-
-// const styles = StyleSheet.create({
-//     buttonContainer: {
-//       flexDirection: 'row',
-//       justifyContent: 'space-between',
-//       marginTop: 20,
-//     },
-//     button: {
-//       alignItems: 'center',
-//       backgroundColor: 'pink',
-//       padding: 10,
-//       marginVertical: 10,
-//       borderRadius: 5,
-//     },
-//   });
-
-//   export default KhachHang; 
   
     return (
         <View style={MyStyles.container}>

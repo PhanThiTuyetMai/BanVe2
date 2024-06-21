@@ -4,6 +4,7 @@ import { TextInput } from "react-native-paper";
 import API, { endpoints } from "../../configs/API";
 import { useNavigation } from "@react-navigation/native";
 import MyStyles from "../../styles/MyStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SuaTuyenXe = ({route}) => {
     const { TuyenXeID } = route.params;
@@ -54,12 +55,17 @@ const SuaTuyenXe = ({route}) => {
 
     const suaTuyenXe = async () => {
         try {
+            const token = await AsyncStorage.getItem('access_token');
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            };
             await API.put(`${endpoints['tuyenxe']}${TuyenXeID}/Sua_TuyenXe/`, {
                 Ten_tuyen: tuyenXe.Ten_tuyen,
                 Diendi: tuyenXe.Diendi,
                 Diemden: tuyenXe.Diemden,
                 BangGia: tuyenXe.BangGia,
-            });
+            }, {headers});
             await TuyenXeData();
             console.log('Thông tin tuyến xe đã được cập nhật');
             Alert.alert(
@@ -78,16 +84,6 @@ const SuaTuyenXe = ({route}) => {
             console.error('Lỗi khi cập nhật thông tin tuyến xe.', err);
         }
     }
-
-    // const xoaTuyenXe = async () => {
-    //     try {
-    //         await API.delete(`${endpoints['tuyenxe']}${TuyenXeID}/Xoa_TuyenXe`,);
-    //         Alert.alert('Xóa tuyến xe thành công.');
-    //         nav.navigate('Danh sách tuyến xe');
-    //     } catch (err) {
-    //         console.error('Không thể xóa tuyến xe.', err);
-    //     }
-    // }
 
     const xoaTuyenXe = async () => {
         Alert.alert(
@@ -141,10 +137,10 @@ const SuaTuyenXe = ({route}) => {
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={suaTuyenXe}>
-                    <Text style={styles.buttonText}>SAVE</Text>
+                    <Text style={styles.buttonText}>LƯU</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, { width: 150 }]} onPress={xoaTuyenXe}>
-                    <Text style={styles.buttonText}>DELETE</Text>
+                    <Text style={styles.buttonText}>XÓA</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>

@@ -5,6 +5,7 @@ import API, { endpoints } from '../../configs/API';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { TextInput, Button } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SuaNhanVien = ({ route }) => {
     const navigation = useNavigation();
@@ -27,23 +28,31 @@ const SuaNhanVien = ({ route }) => {
 
     const NhanVienData = async () => {
         try {
-            const response = await API.get(`${endpoints['nhanvien']}?ma_nhanvien=${nhanvienID}`);
-            const data = response.data.results;
-            data && data.map(
-                c => {
-                    console.log(c.avatar);
-                    setID(c.id);
-                    setName(c.Ten_NV);
-                    setNgaySinh(c.NgaySinh);
-                    setGioiTinh(c.GioiTinh);
-                    setDiaChi(c.DiaChi);
-                    setCMND(c.CMND);
-                    setDienThoai(c.DienThoai);
-                    setEmail(c.Email);
-                    setAvatar(c.avatar); 
-                    setOldAvatar(c.avatar); 
-                }
-            )
+            const token = await AsyncStorage.getItem('access_token');
+            if(token){
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+                const response = await API.get(`${endpoints['nhanvien']}?ma_nhanvien=${nhanvienID}`, {headers});
+                const data = response.data.results;
+                data && data.map(
+                    c => {
+                        console.log(c.avatar);
+                        setID(c.id);
+                        setName(c.Ten_NV);
+                        setNgaySinh(c.NgaySinh);
+                        setGioiTinh(c.GioiTinh);
+                        setDiaChi(c.DiaChi);
+                        setCMND(c.CMND);
+                        setDienThoai(c.DienThoai);
+                        setEmail(c.Email);
+                        setAvatar(c.avatar); 
+                        setOldAvatar(c.avatar); 
+                    }
+                )
+            } else {
+                Alert.alert('Bạn có phải là Quản Lý!!', 'Vui lòng đăng nhập đúng tài khoản!')
+            }
         } catch (error) {
             console.error('Lỗi khi lấy thông tin nhân viên:', error);
         }
@@ -70,6 +79,14 @@ const SuaNhanVien = ({ route }) => {
 
     const suaNhanVien = async () => {
         try {
+            const token = await AsyncStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('Khong Tim Thay Access token');
+            }
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            };
             await API.put(`${endpoints['nhanvien']}${nhanvienID}/Sua_NV/`, {
                 Ten_NV: name,
                 NgaySinh: ngaySinh,
@@ -79,7 +96,7 @@ const SuaNhanVien = ({ route }) => {
                 DienThoai: dienThoai,
                 Email: email,
                 avatar: newAvatar || oldAvatar, 
-            });
+            }, {headers});
             await NhanVienData();
             console.log('Thông tin nhân viên đã được cập nhật');
             Alert.alert(
@@ -88,17 +105,16 @@ const SuaNhanVien = ({ route }) => {
                 [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('Nhân Viên')
+                        onPress: () => navigation.navigate('Nhân Viên - Danh Sách')
                     },
                 ],
                 { cancelable: false }
             )
         } catch (error) {
-            console.error('Lỗi khi cập nhật thông tin nhân viên:', error);
+            Alert.alert('Lỗi', 'Lỗi khi cập nhật thông tin nhân viên!!!')
         }
     };
     
-
     return (
         <KeyboardAvoidingView>
             <ScrollView style={styles.container}>

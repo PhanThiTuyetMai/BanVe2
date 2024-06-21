@@ -53,19 +53,19 @@ function DrawerNavigator() {
         {user === null ? (
           <>
             <Drawer.Screen name='Trang Chủ' component={Home} />
-            <Drawer.Screen name='Login' component={Login} />
+            <Drawer.Screen name='Login' component={Login} options={{title: 'Đăng Nhập'}}/>
             <Drawer.Screen name='Đăng Ký' component={Register} />
           </>
         ) : (
           <>
             <Drawer.Screen name={user.username} component={Home} />
-            <Drawer.Screen name='Logout' component={Logout} />
+            <Drawer.Screen name='Logout' component={Logout} options={{title: 'Đăng Xuất'}}/>
             <Drawer.Screen name='Đơn hàng' component={Profile} />
           </>
         )}
         {user && user.Loai_NguoiDung === "1" && (
           <>
-            <Drawer.Screen name="HomeAdmin" component={HomeAdmin} options={{title: 'Trang tâm quản lý'}} />
+            <Drawer.Screen name="HomeAdmin" component={HomeAdmin} options={{title: 'Trung tâm quản lý'}} />
             <Drawer.Screen name="RegisterAdmin" component={RegisterAdmin} options={{title: 'Đăng ký tài khoản nhân viên'}} />
             <Drawer.Screen name="Nhân Viên" component={NhanVienStackNavigator} />
             <Drawer.Screen name="Khách Hàng" component={KhachHangStackNavigator} />
@@ -82,7 +82,7 @@ function DrawerNavigator() {
         {user && user.Loai_NguoiDung === "4" && (
           <>
             <Drawer.Screen name='Tuyến Xe' component={TuyenXeNavigator} />
-            <Drawer.Screen name='Tài Xế - Chuyến' component={ChuyenTaiXe} />
+            <Drawer.Screen name='Tài Xế - Chuyến' component={ChuyenTaiXe} options={{title: 'Lịch Trình'}}/>
           </>
         )}
       </Drawer.Navigator>
@@ -161,7 +161,7 @@ function TabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Tuyến Xe"
+        name= "Đặt Vé"
         component={TuyenXeNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
